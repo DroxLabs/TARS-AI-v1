@@ -32,7 +32,7 @@ client = OpenAI(
 
 
 @app.post("/ask/")
-async def ask_question(question: str, user_id: str):
+async def ask_question(question: str, user_id: str, thread_id: str=None):
 	assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
@@ -40,7 +40,10 @@ async def ask_question(question: str, user_id: str):
 	# Upload the user provided file to OpenAI
 
 	# Create a thread and attach the file to the message
-	thread = client.beta.threads.create()
+	if thread_id:
+		thread = client.beta.threads.retrieve(thread_id)
+	else:
+		thread = client.beta.threads.create()
 	
 	message = client.beta.threads.messages.create(
 		thread_id=thread.id,
