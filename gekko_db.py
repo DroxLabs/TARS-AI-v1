@@ -54,22 +54,24 @@ class GekkoDB:
         """
         endpoint = "https://pro-api.coingecko.com/api/v3/coins/list"
         return self._make_request(endpoint)
+    
     get_coin_data_by_id_desc = {
         "name": "get_coin_data_by_id",
+        "description": "query all the coin data of a coin on CoinGecko coin page based on a particular coin id",
         "parameters": {
             "type": "object",
             "properties": {
-            "coin_id": {
-                "type": "string",
-                "description": "unique id for coin"
-            }
-            },
+                "coin_id": {
+                    "type": "string",
+                    "description": "unique id for coin"
+                            }
+                        },
             "required": [
             "coin_id"
             ]
-        },
-        "description": "query all the coin data of a coin on CoinGecko coin page based on a particular coin id"
+				}
         }
+    
     def get_coin_data_by_id(self, coin_id):
         """
         Fetches detailed information about a specific coin by its ID.
