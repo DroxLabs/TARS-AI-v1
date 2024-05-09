@@ -18,10 +18,11 @@ client = OpenAI(
 
 app = FastAPI()
 
+gekko_client = GekkoDB(GEKKO_API_KEY)
 
 # Enter your Assistant ID here.
-ASSISTANT_ID = os.getenv("GPT3-5Assistant_id")
-STORE_ID = os.getenv("DROX_LABS_STROE")
+# print(ASSISTANT_ID,'...............')
+STORE_ID = os.getenv("OPENAI_STORE_ID")
 # Access API key
 # api_key = os.getenv("OPENAI_KEY_OUTLOOK")
 client = OpenAI(
