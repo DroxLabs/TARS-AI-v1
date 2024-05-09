@@ -28,25 +28,20 @@ STORE_ID = os.getenv("OPENAI_STORE_ID")
 client = OpenAI(
     api_key=api_key,
 )
-tools_list = [{
-    "type": "function",
-    "function":{
-  "name": "get_coin_data_by_id",
-  "description": "query all the coin data of a coin on CoinGecko coin page based on a particular coin id",
-  "parameters": {
-    "type": "object",
-    "properties": {
-      "coin_id": {
-        "type": "string",
-        "description": "unique id for coin"
-      }
-    },
-    "required": [
-      "coin_id"
-    ]
-  }
-}
-}]
+tools_list = [
+		{
+		"type": "function",
+		"function":gekko_client.get_coin_data_by_id_desc
+		},
+		{
+		"type": "function",
+		"function": gekko_client.get_coin_historical_data_by_id_desc
+        },
+		{
+			"type": "function",
+			"function": gekko_client.get_trend_search_desc
+		}
+		]
 
 assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
