@@ -81,7 +81,6 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions="Please address yourself as Alex an web3 assistant"
 	)
-	print(run.model_dump_json(indent=4))
 
 
 	while True:
@@ -92,24 +91,22 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
         run_id=run.id
    		)
 
-		print(run_status.model_dump_json(indent=4))
 		if run_status.status == 'completed':
 			messages = client.beta.threads.messages.list(thread_id=thread.id)
 			for msg in messages.data:
 				role = msg.role
 				content = msg.content[0].text.value
-				print(f"{role.capitalize()}: {content}")
 				return {'answer':content}
 			break
 		elif run_status.status == 'requires_action':
 			print("Function Calling")
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
-			print(required_actions)
 			tool_outputs = []
 			import json
 			for action in required_actions["tool_calls"]:
 				func_name = action['function']['name']
 				arguments = json.loads(action['function']['arguments'])
+				print(func_name, arguments)
 				if func_name == "get_coin_data_by_id":
 					output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
 					tool_outputs=[
@@ -119,7 +116,22 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 								}
 							]
 				
-				
+				elif func_name == "get_coin_historical_data_by_id":
+					output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments['interval'])
+					tool_outputs=[
+                                {
+                                "tool_call_id": action['id'],
+                                "output": f'query: {output}'
+                                }
+                            ]
+				elif func_name == "get_trend_search":
+					output = gekko_client.get_trend_search()
+					tool_outputs=[
+                                {
+                                "tool_call_id": action['id'],
+                                "output": f'query: {output}'
+                                }
+                            ]
 				else:
 					raise ValueError(f"Unknown function: {func_name}")
 				print("Submitting outputs back to the Assistant...")
