@@ -23,6 +23,30 @@ class GekkoDB:
         }
         response = requests.get(endpoint, headers=headers, params=params)
         return response.json()
+    
+    def get_coin_list_id_map(self, coin_name):
+        for crypto in self.coin_list_id_map:
+            if crypto['name'].lower() == coin_name.lower():
+                return crypto['id']
+        return None
+    
+    get_coin_list_id_map_desc = {
+        "name": "get_coin_list_id_map",
+        "description": "query coin id against coin namefrom a list of dictionaries",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "coin_name": {
+                    "type": "string",
+                    "description": "name of a coin to retrieve it's id"
+                            }
+                        },
+            "required": [
+            "coin_name"
+            ]
+				}
+			}
+
 
     def get_coin_list(self):
         """
