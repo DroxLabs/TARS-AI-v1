@@ -1,18 +1,17 @@
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import JSONResponse
-from typing import Optional
-import openai
+from fastapi import FastAPI
+import time
 import os
-from typing import List
 from openai import OpenAI
 from dotenv import load_dotenv
-from tqdm import tqdm
 import json
+from gekko_db import GekkoDB
 
 load_dotenv()
 
 # Access API key
-api_key = os.getenv("OPENAI_KEY_OUTLOOK")
+ASSISTANT_ID = os.getenv("GPT3-5Assistant_id")
+api_key = os.getenv("OPEN_AI_KEY_MY")
+GEKKO_API_KEY = os.getenv("GEKKO_API_KEY")
 client = OpenAI(
     api_key=api_key,
 )
