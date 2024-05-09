@@ -139,6 +139,34 @@ class GekkoDB:
         }
         return self._make_request(endpoint,params)
 
+    def get_trend_search(self):
+        """
+        Fetches the list of all threading coins NTF and platforms.
+        """
+        endpoint = "https://pro-api.coingecko.com/api/v3/search/trending"
+        response = self._make_request(endpoint)
+        for data in response['categories']:
+            del (data['data']['market_cap_change_percentage_24h'])
+        for data in response['coins']:
+            del(data['item']['data']['price_change_percentage_24h'])
+
+        return response
+    
+    get_trend_search_desc ={
+        "name": "get_trend_search",
+        "description": "get all the trending coins, nft and categories",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "dummy_property": {
+                    "type": "null",
+                }
+            }
+        }
+
+    }
+    
+
     # Add more methods for other specific API endpoints as needed
 
 
