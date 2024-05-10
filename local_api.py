@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,  Response
 import time
 import os
 from openai import OpenAI
@@ -33,14 +33,22 @@ tools_list = [
 		"type": "function",
 		"function":gekko_client.get_coin_data_by_id_desc
 		},
+
 		{
 		"type": "function",
 		"function": gekko_client.get_coin_historical_data_by_id_desc
         },
+
 		{
 			"type": "function",
 			"function": gekko_client.get_trend_search_desc
+		},
+
+		{
+			"type": "code_interpreter"
 		}
+
+
 		]
 
 assistant = client.beta.assistants.update(
@@ -94,9 +102,19 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 		if run_status.status == 'completed':
 			messages = client.beta.threads.messages.list(thread_id=thread.id)
 			for msg in messages.data:
-				role = msg.role
-				content = msg.content[0].text.value
-				return {'answer':content}
+				try:
+					content = msg.content[0].text.value
+					return {'answer':content}
+				except:
+					print(msg.content[0].image_file.file_id)
+					img_file_id = msg.content[0].image_file.file_id
+					image_file = client.files.content(img_file_id)
+					image_data_bytes = image_file.read()
+					headers = {"Content-Type": "image/jpeg"}
+
+					text = msg.content[1].text.value
+					return Response(content=image_data_bytes, headers=headers)
+				
 			break
 		elif run_status.status == 'requires_action':
 			print("Function Calling")
