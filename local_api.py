@@ -5,6 +5,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 from gekko_db import GekkoDB
+from tokenizer import tokenize_string
 
 load_dotenv()
 
@@ -64,8 +65,14 @@ def get_outputs_for_tool_call(tool_call):
 		 "output": details
 		 }
 
+
+
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, thread_id: str=None):
+
+	if len(tokenize_string(question)) > 200:
+		return Response(status_code=200, content="Question is too long. Please shorten your question and try again.")
+
 	
 	# Upload the user provided file to OpenAI
 
