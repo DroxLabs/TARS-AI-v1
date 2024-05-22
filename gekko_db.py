@@ -85,14 +85,42 @@ class GekkoDB:
 
         return filtered_respose
     
-    def get_coin_historical_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3):
+    def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
+        endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
+        response = self._make_request(endpoint)
+        response = response['market_data']
+        return response
+    
+    get_coin_historical_data_by_id_desc = {
+        "name": "get_coin_historical_data_by_id",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "coin_id": {
+                    "type": "string",
+                    "description": "unique id for coin"
+                },
+                "date": {
+                    "type": "string",
+                    "description": "date in Format: dd-mm-yyyy"
+                    },
+            },
+                    "required": [
+                    "coin_id",
+                    'date'
+                    ]
+
+            }       
+        }       
+    
+    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
         response['prices'] = [x[1] for x in response['prices']]
         return response
     
-    get_coin_historical_data_by_id_desc = {
-        "name": "get_coin_historical_data_by_id",
+    get_coin_historical_chart_data_by_id_desc = {
+        "name": "get_coin_historical_chart_data_by_id",
         "parameters": {
             "type": "object",
             "properties": {
