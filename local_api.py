@@ -98,12 +98,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions="Please address yourself as Alex an assistant who helps users with their questions and don't answer more than 250 words "
 	)
-
-
-	while True:
-		print('in loop')
-		time.sleep(4)
-		run_status = client.beta.threads.runs.retrieve(
+	run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
         run_id=run.id
    		)
