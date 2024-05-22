@@ -116,11 +116,77 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
         thread_id=thread.id,
         run_id=run.id)
 		try:
+			if run_status.status == 'requires_action':
+				required_actions = run_status.required_action.submit_tool_outputs.model_dump()
+				tool_outputs = []
+				for action in required_actions["tool_calls"]:
+					func_name = action['function']['name']
+					logger.info("func_name:" + func_name)
+					arguments = json.loads(action['function']['arguments'])
+
+					if func_name == "get_coin_data_by_id":
+						output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
+						tool_outputs=[
+									{
+									"tool_call_id": action['id'],
+									"output": f'query: {output}'
+									}
+								]
+						
+					elif func_name == "get_coin_historical_data_by_id":
+						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
+						tool_outputs=[
+									{
+									"tool_call_id": action['id'],
+									"output": f'query: {output}'
+									}
+								]
+					
+					elif func_name == "get_coin_historical_chart_data_by_id":
+						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments['interval'])
+						tool_outputs=[
+									{
+									"tool_call_id": action['id'],
+									"output": f'query: {output}',
+									}
+								]
+						print('data fron hist chart', output)
+					elif func_name == "get_trend_search":
+						output = gekko_client.get_trend_search()
+						tool_outputs=[
+									{
+									"tool_call_id": action['id'],
+									"output": f'query: {output}'
+									}
+								]
+					else:
+						raise ValueError(f"Unknown function: {func_name}")
+					
+					print("Submitting outputs back to the Assistant...")
+					client.beta.threads.runs.submit_tool_outputs(
+						thread_id=thread.id,
+						run_id=run.id,
+						tool_outputs=tool_outputs,
+					)
+		except Exception as e:
+			logger.error("Failed to process output", e)
+			return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 
 
-	# messages = list(client.beta.threads.messages.list(thread_id=thread.id, run_id=run.id))
 
-	# thread = client.beta.threads.retrieve(thread.id)
+		   
+	messages = client.beta.threads.messages.list(thread_id=thread.id)
+	for msg in messages.data:
+		try:
+			content = msg.content[0].text.value
+			return {'answer':content, "thread_id":thread.id, "function":func_name,'data': output }
+		except:
+			print(msg.content[0].image_file.file_id)
+			img_file_id = msg.content[0].image_file.file_id
+			image_file = client.files.content(img_file_id)
+			image_data_bytes = image_file.read()
+			headers = {"Content-Type": "image/jpeg"}
 
-	# message_content = messages[0].content[0].text
-	# return  {"answer": message_content.value, "thread_id": thread.id}
+			text = msg.content[1].text.value
+			return Response(content=image_data_bytes, headers=headers)
+		
