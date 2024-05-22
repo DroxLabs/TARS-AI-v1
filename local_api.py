@@ -96,7 +96,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
-		instructions="Please address yourself as Alex an web3 assistant"
+		instructions="Please address yourself as Alex an assistant who helps users with their questions and don't answer more than 250 words "
 	)
 
 
