@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 import json
 from gekko_db import GekkoDB
 from tokenizer import tokenize_string
+import json
+import logging
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
