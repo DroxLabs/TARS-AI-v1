@@ -40,18 +40,17 @@ tools_list = [
 
 		{
 		"type": "function",
-		"function": gekko_client.get_coin_historical_data_by_id_desc
+		"function": gekko_client.get_coin_historical_chart_data_by_id_desc
         },
 
 		{
-			"type": "function",
-			"function": gekko_client.get_trend_search_desc
+		"type": "function",
+		"function": gekko_client.get_trend_search_desc
 		},
-
 		{
-			"type": "code_interpreter"
+		"type": "function",
+		"function": gekko_client.get_coin_historical_data_by_id_desc
 		}
-
 
 		]
 
