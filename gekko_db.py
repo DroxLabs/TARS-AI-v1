@@ -117,7 +117,7 @@ class GekkoDB:
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
         response['prices'] = [x[1] for x in response['prices']]
-        return response
+        return response['prices']
     
     get_coin_historical_chart_data_by_id_desc = {
         "name": "get_coin_historical_chart_data_by_id",
@@ -146,7 +146,7 @@ class GekkoDB:
             "days"
             ]
         },
-        "description": "get historical data from CoinGecko coin page based on a particular coin id"
+        "description": "get historical chart to help user make a chart data from CoinGecko coin page based on a particular coin id"
     }
 
 
@@ -211,10 +211,5 @@ if __name__ == "__main__":
     #     print(f"{coin['id']}: {coin['name']} ({coin['symbol']})")
 
     # Get detailed info for a specific coin (e.g., Bitcoin)
-    bitcoin_info = gekko_db.get_coin_data_by_id("bitcoin")
-    print("Bitcoin info", bitcoin_info)
-    print("\nBitcoin Info:")
-    print(bitcoin_info)
-    print(f"Name: {bitcoin_info['name']}")
-    print(f"Symbol: {bitcoin_info['symbol']}")
-    print(f"Description: {bitcoin_info['description']['en']}")
+    coin_info = gekko_db.get_coin_historical_chart_data_by_id('bitcoin')
+    print(coin_info)
