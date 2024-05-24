@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # Access API key
-ASSISTANT_ID = os.getenv("GPT3-5Assistant_id")
-api_key = os.getenv("OPEN_AI_KEY_MY")
+ASSISTANT_ID = os.getenv("TARS_ASSISTANT_ID")
+api_key = os.getenv("TARS_OPENAI")
 GEKKO_API_KEY = os.getenv("GEKKO_API_KEY")
 client = OpenAI(
     api_key=api_key,
@@ -26,7 +26,7 @@ gekko_client = GekkoDB(GEKKO_API_KEY)
 
 # Enter your Assistant ID here.
 # print(ASSISTANT_ID,'...............')
-STORE_ID = os.getenv("OPENAI_STORE_ID")
+STORE_ID = os.getenv("TARS_DB")
 # Access API key
 # api_key = os.getenv("OPENAI_KEY_OUTLOOK")
 client = OpenAI(
