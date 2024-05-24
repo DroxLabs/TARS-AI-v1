@@ -177,7 +177,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
-			return {'answer':content, "thread_id":thread.id, "function":func_name,'data': output }
+			return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': output }
 		except:
 			print(msg.content[0].image_file.file_id)
 			img_file_id = msg.content[0].image_file.file_id
