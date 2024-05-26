@@ -56,7 +56,6 @@ tools_list = [
 		"type": "function",
 		"function": gekko_client.get_coin_historical_data_by_id_desc
 		}
-
 		]
 
 assistant = client.beta.assistants.update(
@@ -137,7 +136,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 									}
 								]
 						
-					elif func_name == "get_coin_historical_data_by_id":
+					if func_name == "get_coin_historical_data_by_id":
 						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
 						tool_outputs=[
 									{
@@ -146,7 +145,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 									}
 								]
 					
-					elif func_name == "get_coin_historical_chart_data_by_id":
+					if func_name == "get_coin_historical_chart_data_by_id":
 						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments['interval'])
 						tool_outputs=[
 									{
@@ -155,26 +154,27 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 									}
 								]
 						print('data fron hist chart', output)
-					elif func_name == "get_trend_search":
+					if func_name == "get_trend_search":
 						output = gekko_client.get_trend_search()
 						tool_outputs=[
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}'
 									}
-						)
+								]
 					if func_name == "search_online":
 						output = search_online(question=arguments['question'])
-						tool_outputs.append(
+						tool_outputs = [
 							{
 								"tool_call_id": action['id'],
 								"output": f'query: {output}'
 							}
-						)
+						]
 					else:
 						raise ValueError(f"Unknown function: {func_name}")
 					
 					print("Submitting outputs back to the Assistant...")
+					print('tools output', tool_outputs )
 					client.beta.threads.runs.submit_tool_outputs(
 						thread_id=thread.id,
 						run_id=run.id,
