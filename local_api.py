@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import json
 from gekko_db import GekkoDB
 from tokenizer import tokenize_string
+from real_time_search import search_online, search_online_desc
 import json
 import logging
 logger = logging.getLogger(__name__)
@@ -34,6 +35,10 @@ client = OpenAI(
 )
 tools_list = [
 		{
+		"type":"function",
+		"function": search_online_desc
+		},
+		{
 		"type": "function",
 		"function":gekko_client.get_coin_data_by_id_desc
 		},
@@ -58,6 +63,7 @@ assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
 	tools = tools_list,
+	instructions = "Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always say you ALEX made by TARS AI, and always search for recent data online rather than from your memory"
 	)
 
 def get_outputs_for_tool_call(tool_call):
@@ -156,7 +162,15 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 									"tool_call_id": action['id'],
 									"output": f'query: {output}'
 									}
-								]
+						)
+					if func_name == "search_online":
+						output = search_online(question=arguments['question'])
+						tool_outputs.append(
+							{
+								"tool_call_id": action['id'],
+								"output": f'query: {output}'
+							}
+						)
 					else:
 						raise ValueError(f"Unknown function: {func_name}")
 					
