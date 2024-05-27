@@ -104,6 +104,7 @@ class GekkoDB:
                     "type": "string",
                     "description": "date in Format: dd-mm-yyyy"
                     },
+                
             },
                     "required": [
                     "coin_id",
@@ -140,13 +141,19 @@ class GekkoDB:
                 "type": "integer",
                 "description": "precision of historical data"
             },
+            
+            "currency": {
+                    "type": "string",
+                    "description": "currency of historical data"
+                },
+            
         },
         "required": [
             "coin_id",
             "days"
             ]
         },
-        "description": "get historical chart to help user make a chart data from CoinGecko coin page based on a particular coin id"
+        "description": "get historical chart to help user make a chart data related to crypto currency from CoinGecko coin page based on a particular coin id"
     }
 
 
