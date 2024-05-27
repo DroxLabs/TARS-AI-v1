@@ -126,50 +126,52 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 					func_name = action['function']['name']
 					logger.info("func_name:" + func_name)
 					arguments = json.loads(action['function']['arguments'])
+					logger.info(f"received args: {arguments}")
 
 					if func_name == "get_coin_data_by_id":
 						output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
-						tool_outputs=[
+						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}'
 									}
-								]
+						)
 						
 					if func_name == "get_coin_historical_data_by_id":
-						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
-						tool_outputs=[
+						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'], )
+						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}'
 									}
-								]
+								)
 					
 					if func_name == "get_coin_historical_chart_data_by_id":
-						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments['interval'])
-						tool_outputs=[
+						
+						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
+						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}',
 									}
-								]
+						)
 						print('data fron hist chart', output)
 					if func_name == "get_trend_search":
 						output = gekko_client.get_trend_search()
-						tool_outputs=[
+						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}'
 									}
-								]
+								)
 					if func_name == "search_online":
 						output = search_online(question=arguments['question'])
-						tool_outputs = [
+						tool_outputs.append(
 							{
 								"tool_call_id": action['id'],
 								"output": f'query: {output}'
 							}
-						]
+						)
 	
 					print("Submitting outputs back to the Assistant...")
 					print('tools output', tool_outputs )
