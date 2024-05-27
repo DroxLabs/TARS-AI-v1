@@ -170,9 +170,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 								"output": f'query: {output}'
 							}
 						]
-					else:
-						raise ValueError(f"Unknown function: {func_name}")
-					
+	
 					print("Submitting outputs back to the Assistant...")
 					print('tools output', tool_outputs )
 					client.beta.threads.runs.submit_tool_outputs(
