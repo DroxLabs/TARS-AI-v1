@@ -84,12 +84,17 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 	# Upload the user provided file to OpenAI
 
 	# Create a thread and attach the file to the message
-	if thread_id:
-		print(thread_id, 'received thread')
-		thread = client.beta.threads.retrieve(thread_id)
-	else:
+	try:
+		if thread_id:
+			print(thread_id, 'received thread')
+			thread = client.beta.threads.retrieve(thread_id)
+		else:
+			thread = client.beta.threads.create()
+			print(thread.id, 'creating thread')
+	except:
 		thread = client.beta.threads.create()
-		print(thread.id, 'creating thread')
+		print(thread.id, 'could not retrive the provided thread making a new one')
+
 
 	
 	message = client.beta.threads.messages.create(
