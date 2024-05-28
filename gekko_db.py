@@ -155,7 +155,8 @@ class GekkoDB:
         "required": [
             "coin_id",
             "days",
-            "data_type"
+            "data_type",
+            'interval',
             ]
         },
         "description": "get historical chart to help user make a chart data related to crypto currency from CoinGecko coin page based on a particular coin id"
