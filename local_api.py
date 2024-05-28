@@ -62,7 +62,7 @@ assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
 	tools = tools_list,
-	instructions = "Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always say you ALEX made by TARS AI, and always search for recent data online rather than from your memory"
+	instructions = "Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  You are ALEX made by TARS AI, and always search for recent data online rather than from your memory"
 	)
 
 def get_outputs_for_tool_call(tool_call):
