@@ -153,13 +153,15 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 					
 					if func_name == "get_coin_historical_chart_data_by_id":
 						
-						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
+						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], data_type=arguments.get('data_type', 'price'),days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
 						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
 									"output": f'query: {output}',
 									}
 						)
+						data_type = arguments.get('data_type', 'price')
+						output = {'data_type':data_type, 'values':output[data_type]}
 						print('data fron hist chart', output)
 					if func_name == "get_trend_search":
 						output = gekko_client.get_trend_search()
