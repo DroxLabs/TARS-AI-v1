@@ -106,7 +106,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
-		instructions="Please address yourself as Alex an assistant who helps users with their questions and don't answer more than 250 words "
+		instructions="Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always say you ALEX made by TARS AI, and always search for recent data online rather than from your memory "
 	)
 	run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
