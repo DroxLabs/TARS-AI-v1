@@ -109,7 +109,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
-		instructions="Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always say you ALEX made by TARS AI, and always search for recent data online rather than from your memory "
+		instructions="Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always address yourself as ALEX made by TARS AI, and always search for recent data online rather than from your memory "
 	)
 	run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
@@ -166,6 +166,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 						data_type = arguments.get('data_type', 'price')
 						global DATA
 						DATA = {'data_type':data_type, 'values':output[data_type]}
+						logger.info(f"Data type: {data_type} values: {output[data_type]}")
 						print('data fron hist chart', DATA)
 					if func_name == "get_trend_search":
 						output = gekko_client.get_trend_search()
@@ -204,5 +205,5 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 			content = msg.content[0].text.value
 			return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': DATA }
 		except Exception as e: 
-			 print(e)
-			 return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
+			print(e)
+			return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
