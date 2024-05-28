@@ -111,6 +111,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions="Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  Always address yourself as ALEX made by TARS AI, and always search for recent data online rather than from your memory "
 	)
+
 	run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
         run_id=run.id
