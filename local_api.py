@@ -130,6 +130,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 			if run_status.status == 'requires_action':
 				required_actions = run_status.required_action.submit_tool_outputs.model_dump()
 				tool_outputs = []
+				print("required_actions", required_actions["tool_calls"])
 				for action in required_actions["tool_calls"]:
 					func_name = action['function']['name']
 					logger.info("func_name:" + func_name)
@@ -146,7 +147,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 						)
 						
 					if func_name == "get_coin_historical_data_by_id":
-						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'], )
+						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
 						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
@@ -156,7 +157,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 					
 					if func_name == "get_coin_historical_chart_data_by_id":
 						
-						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments['coin_id'], data_type=arguments.get('data_type', 'price'),days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
+						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments.get('coin_id', 'bitcoin'), data_type=arguments.get('data_type', 'price'),days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
 						tool_outputs.append(
 									{
 									"tool_call_id": action['id'],
