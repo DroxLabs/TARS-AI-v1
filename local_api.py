@@ -72,10 +72,13 @@ def get_outputs_for_tool_call(tool_call):
 		 "output": details
 		 }
 
+DATA = None
 
 
 @app.post("/ask/")
-async def ask_question(question: str, user_id: str, thread_id: str=None):
+async def ask_question(question: str, user_id: str,token: str, thread_id: str=None, ):
+	if token != '1MillionDollars':
+		return Response(status_code=200, content="Invalid Token!")
 
 	if len(tokenize_string(question)) > 200:
 		return Response(status_code=200, content="Question is too long. Please shorten your question and try again.")
@@ -85,7 +88,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 
 	# Create a thread and attach the file to the message
 	try:
-		if thread_id:
+		if thread_id is not None:
 			print(thread_id, 'received thread')
 			thread = client.beta.threads.retrieve(thread_id)
 		else:
@@ -161,8 +164,9 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 									}
 						)
 						data_type = arguments.get('data_type', 'price')
-						output = {'data_type':data_type, 'values':output[data_type]}
-						print('data fron hist chart', output)
+						global DATA
+						DATA = {'data_type':data_type, 'values':output[data_type]}
+						print('data fron hist chart', DATA)
 					if func_name == "get_trend_search":
 						output = gekko_client.get_trend_search()
 						tool_outputs.append(
@@ -198,16 +202,7 @@ async def ask_question(question: str, user_id: str, thread_id: str=None):
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
-			if func_name == 'get_coin_historical_chart_data_by_id':
-				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': output }
-			return  {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': 'NA' }
-		except:
-			print(msg.content[0].image_file.file_id)
-			img_file_id = msg.content[0].image_file.file_id
-			image_file = client.files.content(img_file_id)
-			image_data_bytes = image_file.read()
-			headers = {"Content-Type": "image/jpeg"}
-
-			text = msg.content[1].text.value
-			return Response(content=image_data_bytes, headers=headers)
-		
+			return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': DATA }
+		except Exception as e: 
+			 print(e)
+			 return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
