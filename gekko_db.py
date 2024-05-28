@@ -114,11 +114,11 @@ class GekkoDB:
             }       
         }       
     
-    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3):
+    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3, data_type='price'):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
-        response['prices'] = [x[1] for x in response['prices']]
-        return response['prices']
+        return response
+    
     
     get_coin_historical_chart_data_by_id_desc = {
         "name": "get_coin_historical_chart_data_by_id",
@@ -146,11 +146,16 @@ class GekkoDB:
                     "type": "string",
                     "description": "currency of historical data"
                 },
+            "data_type": {
+                "type": "string",
+                "description": "can be a market_caps, prices , total_volumes of a coin "
+            }
             
         },
         "required": [
             "coin_id",
-            "days"
+            "days",
+            "data_type"
             ]
         },
         "description": "get historical chart to help user make a chart data related to crypto currency from CoinGecko coin page based on a particular coin id"
