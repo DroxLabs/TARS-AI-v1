@@ -62,7 +62,7 @@ assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
 	tools = tools_list,
-	instructions = "Please address yourself as Alex an web3 assistant and don't answer more than 250 words.  You are ALEX made by TARS AI, and always search for recent data online rather than from your memory"
+	instructions = "Please address yourself as Alex an web3 assistant and don't answer more than 250 words.You are ALEX made by TARS AI, and always search for recent data online rather than from your memory"
 	)
 
 def get_outputs_for_tool_call(tool_call):
@@ -117,85 +117,93 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
    		)
 	output = "NULL"
 	func_name = "NULL"
+	CHART_DATA = False
 	chart = False
 	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph'] for item in  question.split(' ')):
 		chart = True
 
-
+	tool_outputs = []
 	while run_status.status != 'completed':
 		run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
         run_id=run.id)
-		try:
-			if run_status.status == 'requires_action':
-				required_actions = run_status.required_action.submit_tool_outputs.model_dump()
-				tool_outputs = []
-				print("required_actions", required_actions["tool_calls"])
-				for action in required_actions["tool_calls"]:
-					func_name = action['function']['name']
-					logger.info("func_name:" + func_name)
-					arguments = json.loads(action['function']['arguments'])
-					logger.info(f"received args: {arguments}")
+		# try:
+		if run_status.status == 'completed':
+			break
 
-					if func_name == "get_coin_data_by_id":
-						output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
-						tool_outputs.append(
-									{
-									"tool_call_id": action['id'],
-									"output": f'query: {output}'
-									}
-						)
-						
-					if func_name == "get_coin_historical_data_by_id":
-						output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
-						tool_outputs.append(
-									{
-									"tool_call_id": action['id'],
-									"output": f'query: {output}'
-									}
-								)
+		elif run_status.status == 'requires_action':
+			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
+			logger.info(f"required_actions {required_actions["tool_calls"]}")
+			for action in required_actions["tool_calls"]:
+				func_name = action['function']['name']
+				logger.info("func_name:" + func_name)
+				arguments = json.loads(action['function']['arguments'])
+				logger.info(f"received args: {arguments}")
+
+				if func_name == "get_coin_data_by_id":
+					output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
+					tool_outputs.append(
+								{
+								"tool_call_id": action['id'],
+								"output": f'query: {output}'
+								}
+					)
 					
-					if func_name == "get_coin_historical_chart_data_by_id":
-						
-						output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments.get('coin_id', 'bitcoin'), data_type=arguments.get('data_type', 'price'),days=arguments['days'], interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
-						tool_outputs.append(
-									{
-									"tool_call_id": action['id'],
-									"output": f'query: {output}',
-									}
-						)
+				if func_name == "get_coin_historical_data_by_id":
+					output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
+					tool_outputs.append(
+								{
+								"tool_call_id": action['id'],
+								"output": f'query: {output}'
+								}
+							)
+				
+				if func_name == "get_coin_historical_chart_data_by_id":
+					CHART_DATA = True
+					
+					output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments.get('coin_id', 'bitcoin'), data_type=arguments.get('data_type', 'price'),days=arguments.get('days',5), interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
+					tool_outputs.append(
+								{
+								"tool_call_id": action['id'],
+								"output": f'query: {output}',
+								}
+					)
+					try:
 						data_type = arguments.get('data_type', 'price')
 						global DATA
 						DATA = {'data_type':data_type, 'values':output[data_type]}
 						logger.info(f"Data type: {data_type} values: {output[data_type]}")
-						print('data fron hist chart', DATA)
-					if func_name == "get_trend_search":
-						output = gekko_client.get_trend_search()
-						tool_outputs.append(
-									{
-									"tool_call_id": action['id'],
-									"output": f'query: {output}'
-									}
-								)
-					if func_name == "search_online":
-						output = search_online(question=arguments['question'])
-						tool_outputs.append(
-							{
+						print('data from hist chart', DATA)
+					except Exception as e :
+						print(e)
+
+				if func_name == "get_trend_search":
+					output = gekko_client.get_trend_search()
+					tool_outputs.append(
+								{
 								"tool_call_id": action['id'],
 								"output": f'query: {output}'
-							}
-						)
-	
-					print("Submitting outputs back to the Assistant...")
-					print('tools output', tool_outputs )
-					client.beta.threads.runs.submit_tool_outputs(
-						thread_id=thread.id,
-						run_id=run.id,
-						tool_outputs=tool_outputs,
+								}
+							)
+				if func_name == "search_online":
+					output = search_online(question=arguments['question'])
+					tool_outputs.append(
+						{
+							"tool_call_id": action['id'],
+							"output": f'query: {output}'
+						}
 					)
-		except Exception as e:
-			logger.error("Failed to process output", e)
-			return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
+
+				logger.info("Submitting outputs back to the Assistant...")
+				logger.info(f'tools output: {tool_outputs}' )
+			client.beta.threads.runs.submit_tool_outputs(
+				thread_id=thread.id,
+				run_id=run.id,
+				tool_outputs=tool_outputs,
+			)
+		# except TypeError as e:
+		# 	logger.error("Failed to process output", e)
+		# 	return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 
 
 
@@ -204,7 +212,11 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
-			return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': DATA }
+			if DATA is not None and CHART_DATA:
+				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': DATA }
+			else:
+				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': "NULL" }
+
 		except Exception as e: 
 			print(e)
-			return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
+			return {'answer':"I am unable to answer your query.", "thread_id":thread.id}
