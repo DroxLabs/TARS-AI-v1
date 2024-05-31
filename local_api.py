@@ -9,7 +9,10 @@ from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc
 import json
 import logging
+logging.getLogger().setLevel(logging.INFO)
+
 logger = logging.getLogger(__name__)
+
 
 load_dotenv()
 
@@ -171,7 +174,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 					try:
 						data_type = arguments.get('data_type', 'price')
 						global DATA
-						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output[data_type]}
+						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, 'prices')}
 						logger.info(f"Data type: {data_type} values: {output[data_type]}")
 						print('data from hist chart', DATA)
 					except Exception as e :
@@ -218,5 +221,5 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': "NULL" }
 
 		except Exception as e: 
-			print(e)
+			print('issue occured', e)
 			return {'answer':"I am unable to answer your query.", "thread_id":thread.id}
