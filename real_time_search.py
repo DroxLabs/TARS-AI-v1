@@ -6,6 +6,20 @@ load_dotenv()
 GOOGLE_KEY = os.getenv("GOOGLE_SEARCH_API")
 search_id = os.getenv('SEARCH_ENGINE_ID')
 
+def current_data_time():
+    import datetime
+    now = datetime.datetime.now()
+    return now.strftime("%Y-%m-%d %H:%M:%S")
+ 
+current_data_time_desc = {
+     "name": "current_data_time",
+        "description": "get current date time for question for recent ",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                    },
+            }
+    }
 
 def search_online(question):
 
@@ -19,11 +33,15 @@ def search_online(question):
     }
 
     response = requests.get(url, params=params)
-    results = response.json()['items']
-    answers = ""
-    for item in results:
-        answers+=item['snippet']
-    return answers
+    # print('real tiem search api response', response.json())
+    try:
+        results = response.json()['items']
+        answers = ""
+        for item in results:
+            answers+=item['snippet']
+        return answers
+    except KeyError as e:
+        return "I am unable to answer your query. can you be more specific"
 
 
 search_online_desc = {
