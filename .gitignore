@@ -1,0 +1,6 @@
+/.env
+*.pyc
+*.pdf
+*.md
+*.json
+*.txt
