@@ -171,7 +171,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 					try:
 						data_type = arguments.get('data_type', 'price')
 						global DATA
-						DATA = {'data_type':data_type, 'values':output[data_type]}
+						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output[data_type]}
 						logger.info(f"Data type: {data_type} values: {output[data_type]}")
 						print('data from hist chart', DATA)
 					except Exception as e :
