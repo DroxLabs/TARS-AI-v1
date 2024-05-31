@@ -133,7 +133,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 		elif run_status.status == 'requires_action':
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
-			logger.info(f"required_actions {required_actions["tool_calls"]}")
+			logger.info(f"required_actions {required_actions['tool_calls']}")
 			for action in required_actions["tool_calls"]:
 				func_name = action['function']['name']
 				logger.info("func_name:" + func_name)
