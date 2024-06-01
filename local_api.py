@@ -122,7 +122,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 	func_name = "NULL"
 	CHART_DATA = False
 	chart = False
-	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph'] for item in  question.split(' ')):
+	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph', 'visualize'] for item in  question.split(' ')):
 		chart = True
 
 	tool_outputs = []
