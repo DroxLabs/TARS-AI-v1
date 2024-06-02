@@ -88,7 +88,6 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 	
 	# Upload the user provided file to OpenAI
-
 	# Create a thread and attach the file to the message
 	try:
 		if thread_id is not None:
