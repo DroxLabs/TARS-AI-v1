@@ -9,10 +9,8 @@ from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc
 import json
 import logging
-logging.getLogger().setLevel(logging.INFO)
-
-logger = logging.getLogger(__name__)
-
+from logger import setup_logger
+logger = setup_logger("backend","backend_app.log")
 
 load_dotenv()
 
