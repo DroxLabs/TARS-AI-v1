@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import json
 from gekko_db import GekkoDB
 from tokenizer import tokenize_string
-from real_time_search import search_online, search_online_desc
+from real_time_search import search_online, search_online_desc, current_data_time
 import json
 import logging
 from logger import setup_logger
