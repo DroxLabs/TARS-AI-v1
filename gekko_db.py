@@ -79,11 +79,19 @@ class GekkoDB:
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/"
 
         respose = self._make_request(endpoint)
-        retrieve_data = ['id','symbol','name','block_time_in_minutes','hashing_algorithm', 'market_data','description']
-        filtered_respose = {key: respose[key] for key in retrieve_data if key in respose}
-
-
-        return filtered_respose
+        retrieve_data = {}
+        retrieve_data['id'] = respose['id']
+        retrieve_data['symbol'] = respose['symbol']
+        retrieve_data['name'] = respose['name']
+        retrieve_data['block_time_in_minutes'] = respose['block_time_in_minutes']
+        retrieve_data['hashing_algorithm'] = respose['hashing_algorithm']
+        retrieve_data['description'] = respose['description']['en']
+        retrieve_data['market_data']={
+            'current_price': respose['market_data']['current_price'],
+            'total_volume': respose['market_data']['total_volume'],
+            'market_cap': respose['market_data']['market_cap']
+        }
+        return retrieve_data
     
     def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
