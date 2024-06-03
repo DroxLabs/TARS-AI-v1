@@ -8,9 +8,6 @@ from gekko_db import GekkoDB
 from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc, current_data_time
 import json
-import logging
-from logger import setup_logger
-logger = setup_logger("backend","backend_app.log")
 
 load_dotenv()
 
@@ -133,12 +130,12 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 		elif run_status.status == 'requires_action':
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
-			logger.info(f"required_actions {required_actions['tool_calls']}")
+			print(f"required_actions {required_actions['tool_calls']}")
 			for action in required_actions["tool_calls"]:
 				func_name = action['function']['name']
-				logger.info("func_name:" + func_name)
+				print("func_name:" + func_name)
 				arguments = json.loads(action['function']['arguments'])
-				logger.info(f"received args: {arguments}")
+				print(f"received args: {arguments}")
 
 				if func_name == "get_coin_data_by_id":
 					output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
@@ -172,7 +169,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 						data_type = arguments.get('data_type', 'price')
 						global DATA
 						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, 'prices')}
-						logger.info(f"Data type: {data_type} values: {output[data_type]}")
+						print(f"Data type: {data_type} values: {output[data_type]}")
 						print('data from hist chart', DATA)
 					except Exception as e :
 						print(e)
@@ -194,8 +191,8 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 						}
 					)
 
-				logger.info("Submitting outputs back to the Assistant...")
-				logger.info(f'tools output: {tool_outputs}' )
+				print("Submitting outputs back to the Assistant...")
+				print(f'tools output: {tool_outputs}' )
 			client.beta.threads.runs.submit_tool_outputs(
 				thread_id=thread.id,
 				run_id=run.id,
