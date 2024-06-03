@@ -194,12 +194,17 @@ class GekkoDB:
         """
         endpoint = "https://pro-api.coingecko.com/api/v3/search/trending"
         response = self._make_request(endpoint)
-        for data in response['categories']:
-            del (data['data']['market_cap_change_percentage_24h'])
-        for data in response['coins']:
-            del(data['item']['data']['price_change_percentage_24h'])
+        data = {'coins': []}
+        for coin in  response['coins']:
+            data['coins'].append({'coin': coin['item']['id'], 'name': coin['item']['name'], 'description': coin['item']['data']['content']})
+        data['nfts'] = []
+        for nft in  response['nfts']:
+            data['nfts'].append({'id': nft['id'], 'name': nft['name'], 'symbol': nft['symbol'],'nft_contract_id': nft['nft_contract_id']})
+        data['categories'] = []
+        for category in  response['categories']:
+            data['categories'].append({'id': category['id'], 'name': category['name'], 'slug': category['slug']})
 
-        return response
+        return data
     
     get_trend_search_desc ={
         "name": "get_trend_search",
