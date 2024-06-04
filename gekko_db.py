@@ -80,18 +80,24 @@ class GekkoDB:
 
         respose = self._make_request(endpoint)
         retrieve_data = {}
-        retrieve_data['id'] = respose['id']
-        retrieve_data['symbol'] = respose['symbol']
-        retrieve_data['name'] = respose['name']
-        retrieve_data['block_time_in_minutes'] = respose['block_time_in_minutes']
-        retrieve_data['hashing_algorithm'] = respose['hashing_algorithm']
-        retrieve_data['description'] = respose['description']['en']
-        retrieve_data['market_data']={
-            'current_price': respose['market_data']['current_price'],
-            'total_volume': respose['market_data']['total_volume'],
-            'market_cap': respose['market_data']['market_cap']
-        }
-        return retrieve_data
+        try:
+            retrieve_data['id'] = respose['id']
+            retrieve_data['symbol'] = respose['symbol']
+            retrieve_data['name'] = respose['name']
+            retrieve_data['block_time_in_minutes'] = respose['block_time_in_minutes']
+            retrieve_data['hashing_algorithm'] = respose['hashing_algorithm']
+            retrieve_data['description'] = respose['description']['en']
+            retrieve_data['market_data']={
+                'current_price': respose['market_data']['current_price'],
+                'total_volume': respose['market_data']['total_volume'],
+                'market_cap': respose['market_data']['market_cap']
+            }
+
+            return retrieve_data
+        
+        except KeyError as e:
+            print(f"Error: {e}")
+            return "I am unable to answer your query. can you be more specific"
     
     def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
@@ -237,5 +243,7 @@ if __name__ == "__main__":
     #     print(f"{coin['id']}: {coin['name']} ({coin['symbol']})")
 
     # Get detailed info for a specific coin (e.g., Bitcoin)
-    coin_info = gekko_db.get_coin_historical_chart_data_by_id('bitcoin')
+    # coin_info = gekko_db.get_coin_historical_chart_data_by_id('bitcoin', interval='hourly')
+    # coin_info = gekko_db.get_coin_data_by_id('bitcoin')
+    coin_info = gekko_db.get_trend_search()
     print(coin_info)
