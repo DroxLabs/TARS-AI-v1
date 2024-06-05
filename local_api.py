@@ -60,7 +60,7 @@ assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
 	tools = tools_list,
-	instructions = f"Please address yourself as Alex an web3 assistant and don't answer more than 250 words.You are ALEX made by TARS AI, today's date is {current_data_time()} make sure to get data from function if user ask for recent information ,and always search for recent data online rather than from your memory"
+	instructions = f"Please address yourself as Alex an web3 assistant and don't answer more than 250 words.You are ALEX made by TARS AI, today's date is {current_data_time()} use this as cut off point do not forecast values for the user. Make sure to get data from function if user ask for recent information ,and always search for recent data online or from functions rather than from your memory"
 	)
 
 def get_outputs_for_tool_call(tool_call):
@@ -69,6 +69,8 @@ def get_outputs_for_tool_call(tool_call):
 	return {"tool_call_id": tool_call.id,
 		 "output": details
 		 }
+
+
 
 DATA = None
 
@@ -106,6 +108,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
+		instructions = f"Please address yourself as Alex an web3 assistant and don't answer more than 250 words.You are ALEX made by TARS AI, today's date is {current_data_time()} use this as cut off point do not forecast values for the user when they ask for information beyond this time stamp. Make sure to get data from function if user ask for recent information ,and always search for recent data online or from functions rather than from your memory. Do not give data in markdown just give the user a summary of the data dont make charts by yourself"
 	)
 
 	run_status = client.beta.threads.runs.retrieve(
@@ -113,7 +116,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
         run_id=run.id
    		)
 	output = "NULL"
-	func_name = "NULL"
+	called_functions = []
 	CHART_DATA = False
 	chart = False
 	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph', 'visualize'] for item in  question.split(' ')):
@@ -124,6 +127,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 		run_status = client.beta.threads.runs.retrieve(
         thread_id=thread.id,
         run_id=run.id)
+		print("current status: " + run_status.status)
 		# try:
 		if run_status.status == 'completed':
 			break
@@ -133,6 +137,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 			print(f"required_actions {required_actions['tool_calls']}")
 			for action in required_actions["tool_calls"]:
 				func_name = action['function']['name']
+				called_functions.append( func_name)
 				print("func_name:" + func_name)
 				arguments = json.loads(action['function']['arguments'])
 				print(f"received args: {arguments}")
@@ -193,11 +198,17 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 				print("Submitting outputs back to the Assistant...")
 				print(f'tools output: {tool_outputs}' )
-			client.beta.threads.runs.submit_tool_outputs(
-				thread_id=thread.id,
-				run_id=run.id,
-				tool_outputs=tool_outputs,
-			)
+
+			try: 
+				client.beta.threads.runs.submit_tool_outputs(
+					thread_id=thread.id,
+					run_id=run.id,
+					tool_outputs=tool_outputs,
+				)
+			except OpenAI.BadRequestError as e:
+				print("Error submitting the tools output: {e}".format(e))
+				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
+
 		# except TypeError as e:
 		# 	logger.error("Failed to process output", e)
 		# 	return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
@@ -210,9 +221,9 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 		try:
 			content = msg.content[0].text.value
 			if DATA is not None and CHART_DATA:
-				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': DATA }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
 			else:
-				return {'answer':content, "thread_id":thread.id, "function":func_name,"chart": chart, 'data': "NULL" }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL" }
 
 		except Exception as e: 
 			print('issue occured', e)
