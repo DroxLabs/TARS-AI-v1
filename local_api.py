@@ -106,8 +106,6 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 		thread = client.beta.threads.create()
 		print(thread.id, 'could not retrive the provided thread making a new one')
 
-
-	
 	message = client.beta.threads.messages.create(
 		thread_id=thread.id,
 		role="user",
@@ -225,7 +223,7 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 					run_id=run.id,
 					tool_outputs=tool_outputs,
 				)
-			except OpenAI.BadRequestError as e:
+			except Exception as e:
 				print("Error submitting the tools output: {e}".format(e))
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 
@@ -237,6 +235,20 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 
 		   
 	messages = client.beta.threads.messages.list(thread_id=thread.id)
+	print("num of msgs", len(messages.data))
+	if len(messages.data) >= 10:
+		deleted_message = client.beta.threads.messages.delete(
+		message_id=messages.data[-1].id,
+		thread_id=thread.id,
+		)
+		deleted_message = client.beta.threads.messages.delete(
+		message_id=messages.data[-2].id,
+		thread_id=thread.id,
+		)
+		print('deleting previous messages')
+
+	
+	# print('length of messages: {}'.format(len(tokenize_string(''.join([x.content[0].text.value for x in messages.data])))))
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
