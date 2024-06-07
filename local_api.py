@@ -232,14 +232,18 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 	messages = client.beta.threads.messages.list(thread_id=thread.id)
 	print("num of msgs", len(messages.data))
 	if len(messages.data) >= 10:
-		deleted_message = client.beta.threads.messages.delete(
-		message_id=messages.data[-1].id,
-		thread_id=thread.id,
-		)
-		deleted_message = client.beta.threads.messages.delete(
-		message_id=messages.data[-2].id,
-		thread_id=thread.id,
-		)
+		try:
+			deleted_message = client.beta.threads.messages.delete(
+			message_id=messages.data[-1].id,
+			thread_id=thread.id,
+			)
+			deleted_message = client.beta.threads.messages.delete(
+			message_id=messages.data[-2].id,
+			thread_id=thread.id,
+			)
+		except Exception as e:
+					print(e)
+					pass
 		print('deleting previous messages')
 
 	
