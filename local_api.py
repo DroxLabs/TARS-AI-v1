@@ -83,6 +83,14 @@ def get_outputs_for_tool_call(tool_call):
 
 DATA = None
 
+def add_message_to_thread(thread_id, user_question):
+    # Create a message inside the thread
+    message = client.beta.threads.messages.create(
+        thread_id=thread_id,
+        role="user",
+        content= user_question
+    )
+    return message
 
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str,token: str, thread_id: str=None, ):
@@ -105,14 +113,8 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 	except:
 		thread = client.beta.threads.create()
 		print(thread.id, 'could not retrive the provided thread making a new one')
-
-	message = client.beta.threads.messages.create(
-		thread_id=thread.id,
-		role="user",
-        content=f"{question}",
-
-	)
 	
+	add_message_to_thread(thread.id, question)
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
@@ -252,6 +254,12 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
+			try:
+				client.beta.threads.runs.cancel(run.id,thread_id=thread.id)
+			except Exception as e:
+				print(e)
+				pass
+
 			if DATA is not None and CHART_DATA:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
 			else:
