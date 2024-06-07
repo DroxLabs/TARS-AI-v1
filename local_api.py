@@ -228,13 +228,6 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 			except Exception as e:
 				print("Error submitting the tools output: {e}".format(e))
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-
-		# except TypeError as e:
-		# 	logger.error("Failed to process output", e)
-		# 	return {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-
-
-
 		   
 	messages = client.beta.threads.messages.list(thread_id=thread.id)
 	print("num of msgs", len(messages.data))
