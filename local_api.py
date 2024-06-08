@@ -149,8 +149,10 @@ async def ask_question(question: str, user_id: str,token: str, thread_id: str=No
 		if run_status.status == 'completed':
 			break
 		elif run_status.status == 'failed':
-			print(run_status)
-			break
+			if run_status.last_error.code == 'rate_limit_exceeded':
+				return {'answer': "Opps looks like we have reached a limit!", "rate_limit_reached": True}
+			else:
+				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 
 		elif run_status.status == 'requires_action':
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
