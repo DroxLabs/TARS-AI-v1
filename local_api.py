@@ -1,4 +1,4 @@
-from fastapi import FastAPI,  Response
+from fastapi import FastAPI,  Response, Header
 import time
 import os
 from openai import OpenAI
@@ -93,16 +93,13 @@ def add_message_to_thread(thread_id, user_question):
     return message
 
 @app.post("/ask/")
-async def ask_question(question: str, user_id: str,token: str, thread_id: str=None, ):
-	if token != '1MillionDollars':
+async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None, ):
+	if auth_token != '1MillionDollars':
 		return Response(status_code=200, content="Invalid Token!")
 
 	if len(tokenize_string(question)) > 200:
 		return Response(status_code=200, content="Question is too long. Please shorten your question and try again.")
 
-	
-	# Upload the user provided file to OpenAI
-	# Create a thread and attach the file to the message
 	try:
 		if thread_id is not None:
 			print(thread_id, 'received thread')
