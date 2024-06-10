@@ -100,7 +100,7 @@ def add_message_to_thread(thread, user_question):
 			role="user",
 			content= user_question
 		)
-		print("Run broken new thread id")
+		print("Run broken create new thread id")
 		print(e)
 		renew = True
 	return message, thread, renew
@@ -276,9 +276,9 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				print(f'deleted msg with coin gekko data from msg: {messages.data[0].id}')
 
 			if DATA is not None and CHART_DATA:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew }
 			else:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL" }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL", 'is_thread_id_new': renew }
 
 		except Exception as e: 
 			print('issue occured', e)
