@@ -55,7 +55,7 @@ tools_list = [
 		"function": gekko_client.get_coin_historical_data_by_id_desc
 		}
 		]
-
+renew = False
 assistant = client.beta.assistants.update(
 	assistant_id=ASSISTANT_ID,
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
