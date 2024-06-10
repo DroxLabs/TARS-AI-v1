@@ -128,6 +128,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 		print(thread.id, 'could not retrive the provided thread making a new one')
 	
 	message, thread, renew = add_message_to_thread(thread, question)
+	cuurent_date = datetime if datetime else current_data_time()
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
