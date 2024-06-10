@@ -132,7 +132,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
-						Please address yourself as "Alex", a Web3 assistant created by TARS AI, and state that today's date is {current_data_time()}. 
+						Please address yourself as "Alex", a Web3 assistant created by TARS AI, and state that today's date is {cuurent_date}. 
 						Use this as the cutoff point for all information provided. Limit your responses to a maximum of 250 words, ensuring answers are 
 						concise, relevant, and directly address the user's query. Do not forecast or predict future values; base all information strictly on 
 						available data as of the current date. Do not add any links to website of images in your answer.For recent information requests, always retrieve data from the appropriate function or online sources, 
