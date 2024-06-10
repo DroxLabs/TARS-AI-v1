@@ -267,11 +267,13 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	for msg in messages.data:
 		try:	
 			content = msg.content[0].text.value
-			if 'get_coin' in func_name:
+			print('Function name', called_functions)
+			if any(name.startswith("get_coin") for name in called_functions):
 				deleted_message = client.beta.threads.messages.delete(
 				message_id=messages.data[0].id,
 				thread_id=thread.id,
 				)
+				print(f'deleted msg with coin gekko data from msg: {messages.data[0].id}')
 
 			if DATA is not None and CHART_DATA:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
