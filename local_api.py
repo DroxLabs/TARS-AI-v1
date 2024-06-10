@@ -93,7 +93,7 @@ def add_message_to_thread(thread, user_question):
 		)
 		print("thread id presisted")
 		renew = False
-	except OpenAIError.BadRequestError as e:
+	except Exception as e:
 		thread = client.beta.threads.create()
 		message = client.beta.threads.messages.create(
 			thread_id=thread_id,
@@ -265,8 +265,14 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	
 	# print('length of messages: {}'.format(len(tokenize_string(''.join([x.content[0].text.value for x in messages.data])))))
 	for msg in messages.data:
-		try:
+		try:	
 			content = msg.content[0].text.value
+			if 'get_coin' in func_name:
+				deleted_message = client.beta.threads.messages.delete(
+				message_id=messages.data[0].id,
+				thread_id=thread.id,
+				)
+
 			if DATA is not None and CHART_DATA:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
 			else:
