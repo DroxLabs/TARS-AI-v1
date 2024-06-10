@@ -1,7 +1,7 @@
 from fastapi import FastAPI,  Response, Header
 import time
 import os
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 from dotenv import load_dotenv
 import json
 from gekko_db import GekkoDB
@@ -83,17 +83,33 @@ def get_outputs_for_tool_call(tool_call):
 
 DATA = None
 
-def add_message_to_thread(thread_id, user_question):
-    # Create a message inside the thread
-    message = client.beta.threads.messages.create(
-        thread_id=thread_id,
-        role="user",
-        content= user_question
-    )
-    return message
+def add_message_to_thread(thread, user_question):
+	# Create a message inside the thread
+	try:
+		message = client.beta.threads.messages.create(
+			thread_id=thread.id,
+			role="user",
+			content= user_question
+		)
+		print("thread id presisted")
+		renew = False
+	except OpenAIError.BadRequestError as e:
+		thread = client.beta.threads.create()
+		message = client.beta.threads.messages.create(
+			thread_id=thread_id,
+			role="user",
+			content= user_question
+		)
+		print("Run broken new thread id")
+		print(e)
+		renew = True
+	return message, thread, renew
+
+
 
 @app.post("/ask/")
-async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None, ):
+async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
+
 	if auth_token != '1MillionDollars':
 		return Response(status_code=200, content="Invalid Token!")
 
@@ -111,7 +127,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 		thread = client.beta.threads.create()
 		print(thread.id, 'could not retrive the provided thread making a new one')
 	
-	add_message_to_thread(thread.id, question)
+	message, thread, renew = add_message_to_thread(thread, question)
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
@@ -250,12 +266,6 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	for msg in messages.data:
 		try:
 			content = msg.content[0].text.value
-			try:
-				client.beta.threads.runs.cancel(run.id,thread_id=thread.id)
-			except Exception as e:
-				print(e)
-				pass
-
 			if DATA is not None and CHART_DATA:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA }
 			else:
