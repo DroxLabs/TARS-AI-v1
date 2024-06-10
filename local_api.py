@@ -96,7 +96,7 @@ def add_message_to_thread(thread, user_question):
 	except Exception as e:
 		thread = client.beta.threads.create()
 		message = client.beta.threads.messages.create(
-			thread_id=thread_id,
+			thread_id=thread.id,
 			role="user",
 			content= user_question
 		)
