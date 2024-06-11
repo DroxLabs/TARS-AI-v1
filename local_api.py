@@ -22,7 +22,6 @@ client = OpenAI(
 app = FastAPI()
 
 gekko_client = GekkoDB(GEKKO_API_KEY)
-
 # Enter your Assistant ID here.
 # print(ASSISTANT_ID,'...............')
 STORE_ID = os.getenv("TARS_DB")
@@ -81,6 +80,7 @@ def get_outputs_for_tool_call(tool_call):
 
 
 
+DATA = None
 
 def add_message_to_thread(thread, user_question):
 	# Create a message inside the thread
@@ -128,7 +128,6 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	
 	message, thread, renew = add_message_to_thread(thread, question)
 	current_date = datetime if datetime else current_data_time()
-	DATA = None
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
@@ -208,6 +207,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 					)
 					try:
 						data_type = arguments.get('data_type', 'price')
+						global DATA
 						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
 						print(f"Data type: {data_type} values: {output[data_type]}")
 						print('data from hist chart', DATA)
