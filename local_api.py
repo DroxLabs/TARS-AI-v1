@@ -108,7 +108,6 @@ def add_message_to_thread(thread, user_question):
 
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
-	DATA = None
 
 	if auth_token != '1MillionDollars':
 		return Response(status_code=200, content="Invalid Token!")
@@ -129,6 +128,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	
 	message, thread, renew = add_message_to_thread(thread, question)
 	current_date = datetime if datetime else current_data_time()
+	DATA = None
 	run = client.beta.threads.runs.create_and_poll(
 		thread_id=thread.id, assistant_id=assistant.id,
 		instructions = f"""
