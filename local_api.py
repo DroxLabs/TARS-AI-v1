@@ -243,7 +243,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 					tool_outputs=tool_outputs,
 				)
 			except Exception as e:
-				print(f"Error submitting the tools output: {e}")
+				print(f"Error submitting the tools output: called function{called_functions} Error {e} ")
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 		   
 	messages = client.beta.threads.messages.list(thread_id=thread.id)
