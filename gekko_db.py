@@ -102,7 +102,7 @@ class GekkoDB:
     def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
         response = self._make_request(endpoint)
-        response = response['market_data']
+        response = response.get('market_data', 'I am unable to find data for this specific date pls enter valid date')
         return response
     
     get_coin_historical_data_by_id_desc = {
