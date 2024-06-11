@@ -259,8 +259,8 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 			thread_id=thread.id,
 			)
 		except Exception as e:
-					print(e)
-					pass
+			print("error ouccered in delete")
+			print(e)
 		print('deleting previous messages')
 
 	
