@@ -214,7 +214,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 						print(f"Data type: {data_type} values: {output[data_type]}")
 						print('data from hist chart', DATA)
 					except Exception as e :
-						print(e)
+						print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
 
 				if func_name == "get_trend_search":
 					output = gekko_client.get_trend_search()
