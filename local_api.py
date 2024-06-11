@@ -84,7 +84,6 @@ def get_outputs_for_tool_call(tool_call):
 
 def add_message_to_thread(thread, user_question):
 	# Create a message inside the thread
-	DATA = None
 	try:
 		message = client.beta.threads.messages.create(
 			thread_id=thread.id,
@@ -109,6 +108,7 @@ def add_message_to_thread(thread, user_question):
 
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
+	DATA = None
 
 	if auth_token != '1MillionDollars':
 		return Response(status_code=200, content="Invalid Token!")
