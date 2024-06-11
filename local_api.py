@@ -208,7 +208,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 								}
 					)
 					try:
-						data_type = arguments.get('data_type', 'price')
+						data_type = arguments.get('data_type','prices') 
 						global DATA
 						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
 						print(f"Data type: {data_type} values: {output[data_type]}")
