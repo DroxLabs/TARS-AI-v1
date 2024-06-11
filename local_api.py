@@ -81,10 +81,10 @@ def get_outputs_for_tool_call(tool_call):
 
 
 
-DATA = None
 
 def add_message_to_thread(thread, user_question):
 	# Create a message inside the thread
+	DATA = None
 	try:
 		message = client.beta.threads.messages.create(
 			thread_id=thread.id,
