@@ -166,7 +166,9 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				return {'answer': "Opps looks like we have reached a limit!", "rate_limit_reached": True}
 			else:
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-
+		elif run_status.status == 'in_progress':
+			print('waiting for function response...')
+			time.sleep(0.25)
 		elif run_status.status == 'requires_action':
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
 			print(f"required_actions {required_actions['tool_calls']}")
