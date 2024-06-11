@@ -131,9 +131,9 @@ class GekkoDB:
     def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3, data_type='price'):
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
-        if response.get('status').get('error_code') == 10005:
-            return {'answer': 'Sorry we can not process this request!'}
-        return response
+        if response.get('prices'):
+            return response
+        return {'answer': 'Sorry we can not process this request!'}
     
     
     get_coin_historical_chart_data_by_id_desc = {
