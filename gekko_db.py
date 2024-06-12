@@ -128,13 +128,13 @@ class GekkoDB:
             }       
         }       
     
-    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3, data_type='price'):
+    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision=3, data_type='prices'):
         if int(days) > 90:
             return {'answer': " Sorry I can't fetch data for more than 90 days."}
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
         if response.get('prices'):
-            return response
+            return response.get(data_type, 'prices')[:-1]
         return {'answer': 'Sorry we can not process this request!'}
     
     
