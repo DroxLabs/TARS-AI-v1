@@ -12,8 +12,8 @@ import json
 load_dotenv()
 
 # Access API key
-ASSISTANT_ID = os.getenv("TARS_ASSISTANT_ID")
-api_key = os.getenv("TARS_OPENAI")
+ASSISTANT_ID = os.getenv("new_tars_assistant")
+api_key = os.getenv("new_tars_key")
 GEKKO_API_KEY = os.getenv("GEKKO_API_KEY")
 client = OpenAI(
     api_key=api_key,
@@ -24,7 +24,7 @@ app = FastAPI()
 gekko_client = GekkoDB(GEKKO_API_KEY)
 # Enter your Assistant ID here.
 # print(ASSISTANT_ID,'...............')
-STORE_ID = os.getenv("TARS_DB")
+STORE_ID = os.getenv("new_tars_db")
 # Access API key
 # api_key = os.getenv("OPENAI_KEY_OUTLOOK")
 client = OpenAI(
