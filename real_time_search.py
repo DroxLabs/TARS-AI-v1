@@ -31,6 +31,7 @@ def search_online(question):
         'key': GOOGLE_KEY,
         'cx': search_id
     }
+    print('Searching for :', question)
 
     response = requests.get(url, params=params)
     # print('real tiem search api response', response.json())
