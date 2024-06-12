@@ -178,6 +178,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 			print('waiting for function response...')
 			time.sleep(0.25)
 		elif run_status.status == 'requires_action':
+			tool_outputs = []
 			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
 			print(f"required_actions {required_actions['tool_calls']}")
 			for action in required_actions["tool_calls"]:
@@ -215,14 +216,15 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 								"output": f'query: {output}',
 								}
 					)
-					try:
-						data_type = arguments.get('data_type','prices') 
-						global DATA
-						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
-						print(f"Data type: {data_type} values: {output[data_type]}")
-						print('data from hist chart', DATA)
-					except Exception as e :
-						print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
+					if run_status.required_action.type == 'submit_tool_outputs':
+						try:
+							data_type = arguments.get('data_type','prices') 
+							global DATA
+							DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
+							print(f"Data type: {data_type} values: {output[data_type]}")
+							print('data from hist chart', DATA)
+						except Exception as e :
+							print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
 
 				if func_name == "get_trend_search":
 					output = gekko_client.get_trend_search()
