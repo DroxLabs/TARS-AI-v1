@@ -105,6 +105,14 @@ def add_message_to_thread(thread, user_question):
 	return message, thread, renew
 
 
+def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_million_input=5, rate_per_million_output=15):
+    # Calculate the price for input and output separately
+    input_price = rate_per_million_input / 1000000 * input_tokens_used
+    output_price = rate_per_million_output / 1000000 * output_tokens_used
+    # Calculate the total price
+    total_price = input_price + output_price
+    return total_price
+
 
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
@@ -262,6 +270,12 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 			print("error ouccered in delete")
 			print(e)
 		print('deleting previous messages')
+	try: 
+		cost = calculate_overall_price(run_status.usage.prompt_tokens, run_status.usage.completion_tokens)
+	except:
+		cost = 0 
+		
+
 
 	
 	# print('length of messages: {}'.format(len(tokenize_string(''.join([x.content[0].text.value for x in messages.data])))))
@@ -277,9 +291,9 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				print(f'deleted msg with coin gekko data from msg: {messages.data[0].id}')
 
 			if DATA is not None and CHART_DATA:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew, 'cost': cost }
 			else:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL", 'is_thread_id_new': renew }
+				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL", 'is_thread_id_new': renew, 'cost': cost }
 
 		except Exception as e: 
 			print('issue occured', e)
