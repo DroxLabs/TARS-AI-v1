@@ -290,7 +290,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				)
 				print(f'deleted msg with coin gekko data from msg: {messages.data[0].id}')
 
-			if DATA is not None and CHART_DATA:
+			if DATA:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew, 'cost': cost }
 			else:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL", 'is_thread_id_new': renew, 'cost': cost }
