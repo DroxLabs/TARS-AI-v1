@@ -19,6 +19,7 @@ GEKKO_API_KEY = os.getenv("GEKKO_API_KEY")
 client = OpenAI(
     api_key=api_key,
 )
+AUTH_TOKEN = os.getenv("AuthToken")
 mongo_pass = os.getenv("mongo_pass")
 mongo_store = MongoStore(f'mongodb+srv://abdul_samad:{mongo_pass}@tars-backend.fvg1suu.mongodb.net/')
 
@@ -121,7 +122,7 @@ def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_mill
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
 
-	if auth_token != '1MillionDollars':
+	if auth_token != AUTH_TOKEN:
 		return Response(status_code=200, content="Invalid Token!")
 
 	if len(tokenize_string(question)) > 200:
