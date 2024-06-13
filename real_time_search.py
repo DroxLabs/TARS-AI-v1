@@ -13,7 +13,7 @@ def current_data_time():
  
 current_data_time_desc = {
      "name": "current_data_time",
-        "description": "get current date time for question for recent ",
+        "description": "get current date time for question for recent this function should be use when user query consist words like recent, latest, last, not right now",
         "parameters": {
             "type": "object",
             "properties": {
