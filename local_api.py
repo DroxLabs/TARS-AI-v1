@@ -285,8 +285,13 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 		print('deleting previous messages')
 	try: 
 		cost = calculate_overall_price(run_status.usage.prompt_tokens, run_status.usage.completion_tokens)
-	except:
+	except Exception as e:
 		cost = 0 
+		print("Issue ouccered while calculating cost for query", e)
+	try: 
+		mongo_store.add_cost(cost, question, user_id)
+	except Exception as e:
+		print('Issue ouccered while adding price to mongo db', e)
 		
 
 
