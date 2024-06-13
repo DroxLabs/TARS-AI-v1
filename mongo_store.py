@@ -48,3 +48,26 @@ class MongoStore:
             print(f"An error occurred while adding cost: {err}")
             return None
 
+    def get_total_cost_for_day(self, date):
+        """
+        Calculates the total cost for the specified date.
+        """
+        try:
+            start_date = datetime(date.year, date.month, date.day)
+            end_date = start_date + timedelta(days=1)
+            pipeline = [
+                {"$match": {"date": {"$gte": start_date, "$lt": end_date}}},
+                {"$group": {"_id": None, "total_cost": {"$sum": "$cost"}}}
+            ]
+            result = list(self.collection.aggregate(pipeline))
+            if result:
+                total_cost = result[0]["total_cost"]
+            else:
+                total_cost = 0
+            return total_cost
+        except errors.ServerSelectionTimeoutError as err:
+            print(f"Failed to connect to server during aggregation: {err}")
+            return None
+        except Exception as err:
+            print(f"An error occurred while calculating total cost: {err}")
+            return None
