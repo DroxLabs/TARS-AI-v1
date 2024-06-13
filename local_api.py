@@ -9,6 +9,7 @@ from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc, current_data_time
 from mongo_store import MongoStore
 import json
+from datetime import datetime as dt
 
 load_dotenv()
 
@@ -121,7 +122,7 @@ def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_mill
 
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
-	today = datetime()
+	today = dt()
 
 	if mongo_store.get_total_cost_for_day(today.year,today.month,today.day) >= 1500:
 		return Response(status_code=200, content="Oops seems like we have reached a limit!")
