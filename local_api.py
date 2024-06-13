@@ -230,15 +230,14 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 								"output": f'query: {output}',
 								}
 					)
-					if run_status.required_action.type == 'submit_tool_outputs':
-						try:
-							data_type = arguments.get('data_type','prices') 
-							global DATA
-							DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
-							print(f"Data type: {data_type} values: {output[data_type]}")
-							print('data from hist chart', DATA)
-						except Exception as e :
-							print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
+					try:
+						data_type = arguments.get('data_type','prices') 
+						global DATA
+						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
+						print(f"Data type: {data_type} values: {output[data_type]}")
+						print('data from hist chart', DATA)
+					except Exception as e :
+						print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
 
 				if func_name == "get_trend_search":
 					output = gekko_client.get_trend_search()
@@ -258,17 +257,18 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 					)
 
 				print("Submitting outputs back to the Assistant...")
-				print(f'tools output: {tool_outputs}' )
+				print(f'tools output: {tool_outputs}')
 
-			try: 
-				client.beta.threads.runs.submit_tool_outputs(
-					thread_id=thread.id,
-					run_id=run.id,
-					tool_outputs=tool_outputs,
-				)
-			except Exception as e:
-				print(f"Error submitting the tools output: called function{called_functions} Error {e} ")
-				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
+			if run_status.required_action.type == 'submit_tool_outputs':
+				try: 
+					client.beta.threads.runs.submit_tool_outputs(
+						thread_id=thread.id,
+						run_id=run.id,
+						tool_outputs=tool_outputs,
+					)
+				except Exception as e:
+					print(f"Error submitting the tools output: called function{called_functions} Error {e} ")
+					return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
 		   
 	messages = client.beta.threads.messages.list(thread_id=thread.id)
 	print("num of msgs", len(messages.data))
