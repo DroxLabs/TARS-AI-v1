@@ -139,9 +139,10 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 		else:
 			thread = client.beta.threads.create()
 			print(thread.id, 'creating thread')
-	except:
+	except Exception as e:
 		thread = client.beta.threads.create()
 		print(thread.id, 'could not retrive the provided thread making a new one')
+		print(e)
 	
 	message, thread, renew = add_message_to_thread(thread, question)
 	current_date = datetime if datetime else current_data_time()
