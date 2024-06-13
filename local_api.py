@@ -125,7 +125,7 @@ def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_mill
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
 	total_cost = mongo_store.get_total_cost_for_day(dt.now())
 	if total_cost >= DAILY_LIMIT:
-		return Response(status_code=200, content="Oops seems like we have reached a limit!")
+		return Response(status_code=412, content="Oops seems like we have reached a limit!")
 	else:
 		print("today's total cost:", total_cost )
 	if auth_token != AUTH_TOKEN:
