@@ -7,6 +7,7 @@ import json
 from gekko_db import GekkoDB
 from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc, current_data_time
+from mongo_store import MongoStore
 import json
 
 load_dotenv()
@@ -18,6 +19,8 @@ GEKKO_API_KEY = os.getenv("GEKKO_API_KEY")
 client = OpenAI(
     api_key=api_key,
 )
+mongo_pass = os.getenv("mongo_pass")
+mongo_store = MongoStore(f'mongodb+srv://abdul_samad:{mongo_pass}@tars-backend.fvg1suu.mongodb.net/')
 
 app = FastAPI()
 
