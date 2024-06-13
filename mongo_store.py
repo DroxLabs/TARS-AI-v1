@@ -15,3 +15,17 @@ class MongoStore:
         self.collection = None
         self.connect()
 
+    def connect(self):
+        try:
+            self.client = MongoClient(self.connection_string, serverSelectionTimeoutMS=5000)
+            self.db = self.client[self.db_name]
+            self.collection = self.db[self.collection_name]
+            # Attempt to fetch server info to confirm connection
+            self.client.server_info()
+            print("Connected to MongoDB server successfully.")
+        except errors.ServerSelectionTimeoutError as err:
+            print(f"Failed to connect to server: {err}")
+        except errors.ConnectionFailure as err:
+            print(f"Connection failure: {err}")
+        except Exception as err:
+            print(f"An error occurred: {err}")
