@@ -71,3 +71,20 @@ class MongoStore:
         except Exception as err:
             print(f"An error occurred while calculating total cost: {err}")
             return None
+
+def main():
+    mongo_pass = os.getenv("mongo_pass")
+    try:
+        mongo_store = MongoStore(f'mongodb+srv://abdul_samad:{mongo_pass}@tars-backend.fvg1suu.mongodb.net/')
+        mongo_store.add_cost(100.50, "Purchase of office supplies", 'bahawal#bahawl')
+        mongo_store.add_cost(3.50, "soemthing", 'samad')
+
+        specific_date = datetime(2024, 6, 13)
+        total_cost = mongo_store.get_total_cost_for_day(specific_date)
+        print("Total cost for the specified date:", total_cost)
+    except Exception as e:
+        print(f"An error occurred in the main function: {e}")
+        raise e
+
+if __name__ == "__main__":
+    main()
