@@ -29,3 +29,22 @@ class MongoStore:
             print(f"Connection failure: {err}")
         except Exception as err:
             print(f"An error occurred: {err}")
+
+    def add_cost(self, cost, description, user):
+        """
+        Inserts a document with the current date and time, cost, description, and user into the collection.
+        """
+        try:
+            document = {
+                "date": datetime.now(),
+                "cost": cost,
+                "description": description,
+                "user": user
+            }
+            result = self.collection.insert_one(document)
+            print(f"Document inserted with id: {result.inserted_id}")
+            return result
+        except Exception as err:
+            print(f"An error occurred while adding cost: {err}")
+            return None
+
