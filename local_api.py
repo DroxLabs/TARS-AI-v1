@@ -112,7 +112,7 @@ def add_message_to_thread(thread, user_question):
 	return message, thread, renew
 
 
-def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_million_input=5, rate_per_million_output=15):
+def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_million_input=0.50, rate_per_million_output=1.50):
     # Calculate the price for input and output separately
     input_price = rate_per_million_input / 1000000 * input_tokens_used
     output_price = rate_per_million_output / 1000000 * output_tokens_used
