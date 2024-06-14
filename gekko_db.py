@@ -1,7 +1,19 @@
 import requests
 from dotenv import load_dotenv
 import os
+from datetime import datetime
 
+
+
+
+def convert_timestamps(data):
+    formatted_data = []
+    for entry in data:
+        timestamp = entry[0] / 1000  # Convert milliseconds to seconds
+        value = entry[1]
+        formatted_date = datetime.fromtimestamp(timestamp).strftime('%d-%m-%y')
+        formatted_data.append([formatted_date, value])
+    return formatted_data
 
 class GekkoDB:
     def __init__(self, api_key):
