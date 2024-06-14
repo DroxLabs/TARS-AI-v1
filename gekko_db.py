@@ -147,6 +147,7 @@ class GekkoDB:
         response = self._make_request(endpoint)
         if response.get('prices'):
             formatted_data = convert_timestamps(response.get(data_type, 'prices')[:-1])
+            return {data_type:formatted_data}
         return {'answer': 'Sorry we can not process this request!'}
     
     
