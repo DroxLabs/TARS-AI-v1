@@ -168,129 +168,74 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				Note: Follow these RULES strictly to maintain consistency across all responses	
 					"""	)
 
-	run_status = client.beta.threads.runs.retrieve(
-        thread_id=thread.id,
-        run_id=run.id
-   		)
 	output = "NULL"
 	called_functions = []
 	CHART_DATA = False
 	chart = False
 	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph', 'visualize'] for item in  question.split(' ')):
 		chart = True
-
-	tool_outputs = []
-	while run_status.status != 'completed':
-		run_status = client.beta.threads.runs.retrieve(
-        thread_id=thread.id,
-        run_id=run.id)
-		print("current status: " + run_status.status)
-		# try:
-		if run_status.status == 'completed':
-			break
-		elif run_status.status == 'failed':
-			if run_status.last_error.code == 'rate_limit_exceeded':
+	def call_tools(run,thread):
+		print("status at the start:",run.status)
+		while run.status == "queued" or run.status == "in_progress":
+			print("run status right now:",run.status)
+			
+			run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
+			print('waiting for function response...')
+			time.sleep(0.25)
+		
+		if run.status == 'failed':
+			if run.last_error.code == 'rate_limit_exceeded':
 				return {'answer': "Opps looks like we have reached a limit!", "rate_limit_reached": True}
 			else:
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-		elif run_status.status == 'in_progress':
-			print('waiting for function response...')
-			time.sleep(0.25)
-		elif run_status.status == 'requires_action':
+		
+		if run.status == 'requires_action':
 			tool_outputs = []
-			required_actions = run_status.required_action.submit_tool_outputs.model_dump()
-			print(f"required_actions {required_actions['tool_calls']}")
-			for action in required_actions["tool_calls"]:
-				func_name = action['function']['name']
-				called_functions.append( func_name)
-				print("func_name:" + func_name)
-				arguments = json.loads(action['function']['arguments'])
-				print(f"received args: {arguments}")
+			
+			tool_calls = list(run.required_action.submit_tool_outputs.tool_calls)
+			print("tool calls:", tool_calls)
+			print(f'\nASSISTANT REQUESTS {len(tool_calls)} TOOLS:')
+			
+			for tool_call in tool_calls:
+				tool_call_id = tool_call.id
+				print("tool call id:", tool_call_id)
+				print("run id:", run.id)
+				name = tool_call.function.name
+				called_functions.append(name)
+				arguments = json.loads(tool_call.function.arguments)
+				print(f"Assistant requested {name}: {arguments}")
 
-				if func_name == "get_coin_data_by_id":
-					output = gekko_client.get_coin_data_by_id(coin_id=arguments['coin_id'])
-					tool_outputs.append(
-								{
-								"tool_call_id": action['id'],
-								"output": f'query: {output}'
-								}
-					)
-					
-				if func_name == "get_coin_historical_data_by_id":
-					output = gekko_client.get_coin_historical_data_by_id(coin_id=arguments['coin_id'], date=arguments['date'])
-					tool_outputs.append(
-								{
-								"tool_call_id": action['id'],
-								"output": f'query: {output}'
-								}
-							)
-				
-				if func_name == "get_coin_historical_chart_data_by_id":
-					CHART_DATA = True
-					
-					output = gekko_client.get_coin_historical_chart_data_by_id(coin_id=arguments.get('coin_id', 'bitcoin'), data_type=arguments.get('data_type', 'price'),days=arguments.get('days',5), interval=arguments.get('interval', 'daily'), currency=arguments.get('currency','USD'))
-					tool_outputs.append(
-								{
-								"tool_call_id": action['id'],
-								"output": f'query: {output}',
-								}
-					)
-					try:
-						data_type = arguments.get('data_type','prices') 
-						global DATA
-						DATA = {'currency': arguments.get('currency','USD'), 'data_type':data_type, 'values':output.get(data_type, [])}
-						print(f"Data type: {data_type} values: {output[data_type]}")
-						print('data from hist chart', DATA)
-					except Exception as e :
-						print("issue ouccered while  reteriving get_coin_historical_chart_data_by_id", e)
-
-				if func_name == "get_trend_search":
-					output = gekko_client.get_trend_search()
-					tool_outputs.append(
-								{
-								"tool_call_id": action['id'],
-								"output": f'query: {output}'
-								}
-							)
-				if func_name == "search_online":
+				if name == "search_online":
 					output = search_online(question=arguments['question'])
-					tool_outputs.append(
-						{
-							"tool_call_id": action['id'],
-							"output": f'query: {output}'
-						}
-					)
+					tool_outputs.append({"tool_call_id": tool_call_id, "output": json.dumps(output)})
 
-				print("Submitting outputs back to the Assistant...")
-				print(f'tools output: {tool_outputs}')
+				elif name == "draw_graph":
+					print(f"data for draw graph -> {arguments.get('chart',False)}")
+					output = gekko_client.draw_graph(arguments.get('chart',False))
+					tool_outputs.append({"tool_call_id": tool_call_id, "output": 'find the chart below' if output else ""})
 
-			if run_status.required_action.type == 'submit_tool_outputs':
-				try: 
-					client.beta.threads.runs.submit_tool_outputs(
-						thread_id=thread.id,
-						run_id=run.id,
-						tool_outputs=tool_outputs,
-					)
-				except Exception as e:
-					print(f"Error submitting the tools output: called function{called_functions} Error {e} ")
-					return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-		   
-	messages = client.beta.threads.messages.list(thread_id=thread.id)
-	print("num of msgs", len(messages.data))
-	if len(messages.data) >= 10:
-		try:
-			deleted_message = client.beta.threads.messages.delete(
-			message_id=messages.data[-1].id,
-			thread_id=thread.id,
-			)
-			deleted_message = client.beta.threads.messages.delete(
-			message_id=messages.data[-2].id,
-			thread_id=thread.id,
-			)
-		except Exception as e:
-			print("error ouccered in delete")
-			print(e)
-		print('deleting previous messages')
+				else:
+					
+					output = getattr(gekko_client, name)(**arguments)
+					print(output)
+					tool_outputs.append({"tool_call_id": tool_call_id, "output": json.dumps(output)})
+					if name == 'get_coin_historical_chart_data_by_id':
+						global DATA
+						DATA = output
+
+				print(f'Returning {output}')	
+			print("Submitting outputs back to the Assistant...")
+			print(f'tools output: {tool_outputs}')
+			run = client.beta.threads.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+			print("run id:", run.id)
+			print("run status:", run.status)
+			call_tools(run,thread)
+		return run
+	run = call_tools(run,thread)
+	
+	print("status after submission", run.status)
+
+	print('status outside loop:', run.status)
 	try: 
 		cost = calculate_overall_price(run_status.usage.prompt_tokens, run_status.usage.completion_tokens)
 	except Exception as e:
