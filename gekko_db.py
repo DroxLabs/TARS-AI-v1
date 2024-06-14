@@ -69,7 +69,7 @@ class GekkoDB:
     
     get_coin_data_by_id_desc = {
         "name": "get_coin_data_by_id",
-        "description": "query all the coin data of a coin on CoinGecko coin page based on a particular coin id",
+        "description": "query all realtime current data for crypto CoinGecko coin page based on a particular coin id",
         "parameters": {
             "type": "object",
             "properties": {
@@ -119,6 +119,7 @@ class GekkoDB:
     
     get_coin_historical_data_by_id_desc = {
         "name": "get_coin_historical_data_by_id",
+        "description": "get historical of a specific date related to crypto currency from CoinGecko coin page based on a particular coin id",
         "parameters": {
             "type": "object",
             "properties": {
