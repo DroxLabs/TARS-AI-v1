@@ -37,10 +37,7 @@ client = OpenAI(
     api_key=api_key,
 )
 tools_list = [
-		{
-			"type":"function",
-			"function": search_online_desc
-		},
+		
 		{
 			"type": "function",
 			"function":gekko_client.get_coin_data_by_id_desc
@@ -62,6 +59,10 @@ tools_list = [
 		{
 			"type": "function",
 			"function": gekko_client.draw_graph_desc
+		},
+		{
+			"type":"function",
+			"function": search_online_desc
 		}
 		]
 renew = False
