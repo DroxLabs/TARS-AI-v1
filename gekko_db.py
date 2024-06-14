@@ -235,12 +235,8 @@ class GekkoDB:
         "parameters": {
             "type": "object",
             "properties": {
-                "dummy_property": {
-                    "type": "null",
-                }
             }
         }
-
     }
 
     def draw_graph(self, chart):
