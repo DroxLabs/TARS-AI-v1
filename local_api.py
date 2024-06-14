@@ -237,7 +237,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 
 	print('status outside loop:', run.status)
 	try: 
-		cost = calculate_overall_price(run_status.usage.prompt_tokens, run_status.usage.completion_tokens)
+		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
 	except Exception as e:
 		cost = 0 
 		print("Issue ouccered while calculating cost for query", e)
@@ -245,22 +245,13 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 		mongo_store.add_cost(cost, question, user_id)
 	except Exception as e:
 		print('Issue ouccered while adding price to mongo db', e)
-		
-
-
-	
-	# print('length of messages: {}'.format(len(tokenize_string(''.join([x.content[0].text.value for x in messages.data])))))
+	messages = client.beta.threads.messages.list(thread_id=thread.id)
 	for msg in messages.data:
 		try:	
 			content = msg.content[0].text.value
 			print('Function name', called_functions)
-			if any(name.startswith("get_coin") for name in called_functions):
-				deleted_message = client.beta.threads.messages.delete(
-				message_id=messages.data[0].id,
-				thread_id=thread.id,
-				)
-				print(f'deleted msg with coin gekko data from msg: {messages.data[0].id}')
-
+			print(content)
+			print(DATA, chart)
 			if DATA and chart:
 				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew, 'cost': cost }
 			else:
