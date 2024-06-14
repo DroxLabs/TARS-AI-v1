@@ -146,7 +146,7 @@ class GekkoDB:
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
         if response.get('prices'):
-            return {data_type:response.get(data_type, 'prices')[:-1]}
+            formatted_data = convert_timestamps(response.get(data_type, 'prices')[:-1])
         return {'answer': 'Sorry we can not process this request!'}
     
     
