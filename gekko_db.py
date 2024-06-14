@@ -242,6 +242,22 @@ class GekkoDB:
         }
 
     }
+
+    def draw_graph(self, chart):
+        return chart
+    
+    draw_graph_desc = {
+        "name": "draw_graph",
+        "description": "this function will draw, visualize, plot, graphs",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "chart": {
+                    "type": "boolean",
+                }
+            }
+        }
+    }
     
 
     # Add more methods for other specific API endpoints as needed
