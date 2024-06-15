@@ -67,7 +67,7 @@ assistant = client.beta.assistants.update(
 	tool_resources={"file_search": {"vector_store_ids": [STORE_ID]}},
 	tools = tools_list,
 	instructions = f"""
-				Identity: Please address yourself as "Alex", a Web3 assistant created by TARS AI.
+				Identity: Please address yourself as "Tara", a Web3 assistant created by TARS AI.
 				Date:  Today's date is {current_data_time()} and dont answer question if they ask for information about the future.
 				Answer Length:  Limit your responses to a maximum of 250 words, ensuring answers are concise, relevant, and directly address the user's query.
 				Rule1: Do not forecast or predict future values; base all information strictly on available data as of the {current_data_time()}.
