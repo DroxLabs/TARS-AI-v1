@@ -152,6 +152,7 @@ class GekkoDB:
             return {'answer': " Sorry I can't fetch data for more than 90 days."}
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
         response = self._make_request(endpoint)
+        print(response)
         if response.get('prices'):
             formatted_data = convert_timestamps(response.get(data_type, 'prices')[:-1])
             return {data_type:formatted_data}
@@ -281,7 +282,7 @@ if __name__ == "__main__":
     #     print(f"{coin['id']}: {coin['name']} ({coin['symbol']})")
 
     # Get detailed info for a specific coin (e.g., Bitcoin)
-    # coin_info = gekko_db.get_coin_historical_chart_data_by_id('bitcoin', interval='hourly')
-    # coin_info = gekko_db.get_coin_data_by_id('bitcoin')
-    coin_info = gekko_db.get_trend_search()
+    # coin_info = gekko_db.get_coin_historical_chart_data_by_id('tars-protocol', interval='daily')
+    coin_info = gekko_db.get_coin_data_by_id('bitcoin')
+    # coin_info = gekko_db.get_trend_search()
     print(coin_info)
