@@ -167,6 +167,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				Rule6: 	Never Forget your Identity "Tara", a Web3 assistant created by TARS AI
 				Rule7:  Do not cite sources with file search
 				Rule8   remember about "id":"tars-protocol" for "name": "TARS Protocol" or "TARS"
+				Rule9:  For price of anything dont use file search
 				Note: Follow these RULES strictly to maintain consistency across all responses	
 					"""	)
 
