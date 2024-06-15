@@ -60,10 +60,10 @@ tools_list = [
 			"type": "function",
 			"function": gekko_client.draw_graph_desc
 		},
-		# {
-		# 	"type":"function",
-		# 	"function": search_online_desc
-		# }
+		{
+			"type":"function",
+			"function": search_online_desc
+		}
 		]
 renew = False
 assistant = client.beta.assistants.update(
@@ -206,11 +206,11 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				arguments = json.loads(tool_call.function.arguments)
 				print(f"Assistant requested {name}: {arguments}")
 
-				# if name == "search_online":
-				# 	output = search_online(question=arguments['question'])
-				# 	tool_outputs.append({"tool_call_id": tool_call_id, "output": json.dumps(output)})
+				if name == "search_online":
+					output = search_online(question=arguments['question'])
+					tool_outputs.append({"tool_call_id": tool_call_id, "output": json.dumps(output)})
 
-				if name == "draw_graph":
+				elif name == "draw_graph":
 					print(f"data for draw graph -> {arguments.get('chart',False)}")
 					output = gekko_client.draw_graph(arguments.get('chart',False))
 					tool_outputs.append({"tool_call_id": tool_call_id, "output": 'find the chart below' if output else ""})
