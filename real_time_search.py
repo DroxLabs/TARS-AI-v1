@@ -3,8 +3,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-GOOGLE_KEY = os.getenv("GOOGLE_SEARCH_API")
-search_id = os.getenv('SEARCH_ENGINE_ID')
+GOOGLE_KEY = os.getenv("greg_search_api_key")
+search_id = os.getenv('greg_search_engine_id')
 
 def current_data_time():
     import datetime
