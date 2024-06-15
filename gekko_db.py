@@ -88,6 +88,8 @@ class GekkoDB:
         """
         Fetches detailed information about a specific coin by its ID.
         """
+        if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
+            coin_id = 'tars-protocol'
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/"
 
         respose = self._make_request(endpoint)
@@ -112,6 +114,8 @@ class GekkoDB:
             return "I am unable to answer your query. can you be more specific"
     
     def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
+        if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
+            coin_id = 'tars-protocol'
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
         response = self._make_request(endpoint)
         response = response.get('market_data', 'I am unable to find data for this specific date pls enter valid date')
@@ -142,6 +146,8 @@ class GekkoDB:
         }       
     
     def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision='full', data_type='prices'):
+        if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
+            coin_id = 'tars-protocol'
         if int(days) > 90:
             return {'answer': " Sorry I can't fetch data for more than 90 days."}
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/market_chart?vs_currency={currency}&days={days}&interval={interval}&precision={precision}"
@@ -200,6 +206,8 @@ class GekkoDB:
         """
         Fetches detailed information about a specific coin by its ID.
         """
+        if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
+            coin_id = 'tars-protocol'
         endpoint = "https://pro-api.coingecko.com/api/v3/simple/price"
         params = {"ids": coin_id, 'vs_currencies': 'USD'}
         params = {
