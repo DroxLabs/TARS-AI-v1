@@ -9,6 +9,7 @@ from tokenizer import tokenize_string
 from real_time_search import search_online, search_online_desc, current_data_time
 from mongo_store import MongoStore
 import json
+import re
 from datetime import datetime as dt
 
 load_dotenv()
@@ -246,6 +247,9 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	for msg in messages.data:
 		try:	
 			content = msg.content[0].text.value
+			pattern = r'【.*?】'
+			content = re.sub(pattern, '', content)
+			# print(f"cleaned: {content}")
 			print('Function name', called_functions)
 			print(content)
 			print(DATA, chart)
