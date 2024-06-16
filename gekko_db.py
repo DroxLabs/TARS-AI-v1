@@ -249,6 +249,31 @@ class GekkoDB:
         }
     }
 
+    def get_tars_info(self):
+        # coin_data = self.get_coin_data_by_id('tars-protocol')
+        description = """
+                        Question: What exchanges is TAI / TARS available on?
+                        Answer: TAI is available on a number of top rated centralized and decentralized exchanges.
+                        You can find TAI on ByBit, Gate.io, MEXC, Raydium and Jupiter exchange.
+
+                        Question:What is the total supply of TAI / TARS?
+                        Answer:The total supply of TAI is 1 Billion tokens.
+
+                        Question:What chain is TAI / TARS on?
+                        Answer:The TAI token is native to the Solana blockchain, powering the AI economy of Solana.
+
+                        Question: What is the TAI / TARS contract address?
+                        Answer: The contract address for TAI is Hax9LTgsQkze1YFychnBLtFH8gYbQKtKfWKKg2SP6gdD.
+                        You can find TAI on the blockchain explorer here: https://explorer.solana.com/address/Hax9LTgsQkze1YFychnBLtFH8gYbQKtKfWKKg2SP6gdD
+                        """
+        return {'coin_info': description}
+    get_tars_info_desc =  { "name": "get_tars_info",
+        "description": "Get informatiom about Tars Tai ot tars-protocol all question regarding Tars/tai coin in context on crypto",
+        "parameters": {
+            "type": "object",
+            "properties": {}
+        }
+    }
     def draw_graph(self, chart):
         return chart
     
