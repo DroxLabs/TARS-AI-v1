@@ -58,6 +58,10 @@ tools_list = [
 			"function": gekko_client.get_coin_historical_data_by_id_desc
 		},
 		{
+			"type": "function",
+			"function": gekko_client.get_tars_info_desc
+		},
+		{
 			"type": "file_search",
 		}
 		]
