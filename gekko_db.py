@@ -250,7 +250,7 @@ class GekkoDB:
     }
 
     def get_tars_info(self):
-        # coin_data = self.get_coin_data_by_id('tars-protocol')
+        coin_data = self.get_coin_data_by_id('tars-protocol')
         description = """
                         Question: What exchanges is TAI / TARS available on?
                         Answer: TAI is available on a number of top rated centralized and decentralized exchanges.
@@ -266,7 +266,7 @@ class GekkoDB:
                         Answer: The contract address for TAI is Hax9LTgsQkze1YFychnBLtFH8gYbQKtKfWKKg2SP6gdD.
                         You can find TAI on the blockchain explorer here: https://explorer.solana.com/address/Hax9LTgsQkze1YFychnBLtFH8gYbQKtKfWKKg2SP6gdD
                         """
-        return {'coin_info': description}
+        return {'coin_data':coin_data, 'coin_info': description}
     get_tars_info_desc =  { "name": "get_tars_info",
         "description": "Get informatiom about Tars Tai ot tars-protocol all question regarding Tars/tai coin in context on crypto",
         "parameters": {
