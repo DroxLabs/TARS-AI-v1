@@ -63,6 +63,10 @@ tools_list = [
 		},
 		{
 			"type": "file_search",
+		},
+		{
+			"type":"function",
+			"function": search_online_desc
 		}
 		]
 renew = False
