@@ -149,7 +149,10 @@ async def check_input(question: str,auth_token: str):
         max_tokens=1,
         logit_bias={"15": 100, #token ID for `0` 
                     "16": 100})  #token ID for `1`
-	return int(response.choices[0].message.content)
+	if int(response.choices[0].message.content):
+		return Response(status_code=200, content="Valid Question!")
+	else:
+		return Response(status_code=200, content="NOT A VALID QUESTION | BREACH DETECTED")
 
 	
 @app.post("/ask/")
