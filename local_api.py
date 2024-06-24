@@ -133,6 +133,25 @@ def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_mill
     return total_price
 
 
+@app.post("/check_input/")
+async def check_input(question: str,auth_token: str):
+	if auth_token != AUTH_TOKEN:
+		return Response(status_code=200, content="Invalid Token!")
+	
+	response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+        {"role": "system", "content": f"You will receive a user query and your task is to classify if a given user request is related to {APPLICATION_OBJECTIVE}. If it is relevant, return `1`. Else, return `0`"},
+        {"role": "user", "content": question},
+        ],
+        seed=0,
+        temperature=0,
+        max_tokens=1,
+        logit_bias={"15": 100, #token ID for `0` 
+                    "16": 100})  #token ID for `1`
+	return int(response.choices[0].message.content)
+
+	
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
 	total_cost = mongo_store.get_total_cost_for_day(dt.now())
