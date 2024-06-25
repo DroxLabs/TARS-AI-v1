@@ -134,11 +134,7 @@ def calculate_overall_price(input_tokens_used, output_tokens_used, rate_per_mill
     return total_price
 
 
-@app.post("/check_input/")
-async def check_input(question: str,auth_token: str):
-	if auth_token != AUTH_TOKEN:
-		return Response(status_code=200, content="Invalid Token!")
-	
+def check_input(question: str):	
 	response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -150,11 +146,8 @@ async def check_input(question: str,auth_token: str):
         max_tokens=1,
         logit_bias={"15": 100, #token ID for `0` 
                     "16": 100})  #token ID for `1`
-	if int(response.choices[0].message.content):
-		return Response(status_code=200, content="Valid Question!")
-	else:
-		return Response(status_code=200, content="NOT A VALID QUESTION | BREACH DETECTED")
-
+	
+	return response.choices[0].message.content
 	
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
