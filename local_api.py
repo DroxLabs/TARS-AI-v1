@@ -162,6 +162,13 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 
 	if len(tokenize_string(question)) > 200:
 		return Response(status_code=200, content="Question is too long. Please shorten your question and try again.")
+	is_valid_question = check_input(question)
+	print(f"Status of question:", is_valid_question)
+	if not is_valid_question:
+		print("breach detected")
+		question = "who are you and who made you?"
+	else:
+		print('valid question')
 
 	try:
 		if thread_id is not None:
