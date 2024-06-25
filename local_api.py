@@ -147,7 +147,7 @@ def check_input(question: str):
         logit_bias={"15": 100, #token ID for `0` 
                     "16": 100})  #token ID for `1`
 	
-	return response.choices[0].message.content
+	return int(response.choices[0].message.content)
 	
 @app.post("/ask/")
 async def ask_question(question: str, user_id: str, auth_token: str | None = Header(None), datetime: str | None = Header(None), thread_id: str=None):
