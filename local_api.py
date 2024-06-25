@@ -269,7 +269,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	run = call_tools(run,thread)
 	
 	print("status after submission", run.status)
-
+	time.sleep(0.25)
 	print('status outside loop:', run.status)
 	try: 
 		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
