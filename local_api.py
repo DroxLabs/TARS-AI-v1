@@ -272,10 +272,11 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	time.sleep(0.25)
 	print('status outside loop:', run.status)
 	try: 
+		print(run.status)
 		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
 	except Exception as e:
-		cost = 0 
 		print("Issue ouccered while calculating cost for query", e)
+		cost = 0
 	try: 
 		mongo_store.add_cost(cost, question, user_id)
 	except Exception as e:
