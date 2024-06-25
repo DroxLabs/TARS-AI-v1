@@ -274,9 +274,16 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	try: 
 		print(run.status)
 		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
+		print("cost after submission:", cost)
 	except Exception as e:
 		print("Issue ouccered while calculating cost for query", e)
-		cost = 0
+		run = client.beta.threads.runs.cancel(
+				thread_id=thread_id,
+				run_id=run.id
+				)
+		time.sleep(0.25)
+		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
+		print("cost after cancelling:", cost)
 	try: 
 		mongo_store.add_cost(cost, question, user_id)
 	except Exception as e:
