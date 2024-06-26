@@ -88,6 +88,7 @@ assistant = client.beta.assistants.update(
 				Rule8   remember about "id":"tars-protocol" for "name": "TARS Protocol" or "TARS"
 				Rule9:  For price of anything dont use file search
 				Rule10: Do not mention uploaded file until asked by user
+				Rule11: Do not use online search unless you can't find the answer from other functions.
 				Note: Follow these RULES strictly to maintain consistency across all responses	
 				"""	)
 
@@ -200,6 +201,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				Rule8   remember about "id":"tars-protocol" for "name": "TARS Protocol" or "TARS"
 				Rule9:  For price of anything dont use file search
 				Rule10: Do not mention uploaded file until asked by user
+				Rule11: Do not use online search unless you can't find the answer from other functions.
 				Note: Follow these RULES strictly to maintain consistency across all responses	
 					"""	)
 
