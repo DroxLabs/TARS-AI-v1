@@ -277,7 +277,6 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 	time.sleep(0.25)
 	print('status outside loop:', run.status)
 	try: 
-		print(run.status)
 		cost = calculate_overall_price(run.usage.prompt_tokens, run.usage.completion_tokens)
 		print("cost after submission:", cost)
 	except Exception as e:
@@ -297,10 +296,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 			print('Function name', called_functions)
 			print(content)
 			print(DATA, chart)
-			if DATA and chart:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew, 'cost': cost }
-			else:
-				return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': "NULL", 'is_thread_id_new': renew, 'cost': cost }
+			return {'answer':content, "thread_id":thread.id, "function":called_functions,"chart": chart, 'data': DATA, 'is_thread_id_new': renew, 'cost': cost }
 
 		except Exception as e: 
 			print('issue occured', e)
