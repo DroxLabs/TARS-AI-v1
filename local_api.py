@@ -207,11 +207,11 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 
 	output = "NULL"
 	called_functions = []
-	CHART_DATA = False
 	chart = False
 	if any(item in ['chart', 'plot','Chart','Plot', 'graph', 'Graph', 'visualize'] for item in  question.split(' ')):
 		chart = True
 	def call_tools(run,thread):
+		run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 		print("status at the start:",run.status)
 		while run.status == "queued" or run.status == "in_progress":
 			print("run status right now:",run.status)
@@ -225,7 +225,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				return {'answer': "Opps looks like we have reached a limit!", "rate_limit_reached": True}
 			else:
 				return  {'answer':"I am unable to understand your question can you be more specific?", "thread_id":thread.id}
-		
+		run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 		if run.status == 'requires_action':
 			tool_outputs = []
 			
@@ -254,13 +254,15 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 				else:
 					
 					output = getattr(gekko_client, name)(**arguments)
-					print(output)
+					print("output from function:", output)
 					tool_outputs.append({"tool_call_id": tool_call_id, "output": json.dumps(output)})
-					if name == 'get_coin_historical_chart_data_by_id':
+					if name == 'get_crypto_historical_chart_data_by_id':
 						global DATA
 						DATA = output
+						print("Populated data:", DATA)
 
 				print(f'Returning {output}')	
+			run = client.beta.threads.runs.retrieve(thread_id=thread.id, run_id=run.id)
 			print("Submitting outputs back to the Assistant...")
 			print(f'tools output: {tool_outputs}')
 			run = client.beta.threads.runs.submit_tool_outputs(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
@@ -268,6 +270,7 @@ async def ask_question(question: str, user_id: str, auth_token: str | None = Hea
 			print("run status:", run.status)
 			call_tools(run,thread)
 		return run
+	
 	run = call_tools(run,thread)
 	
 	print("status after submission", run.status)
