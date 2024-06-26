@@ -41,12 +41,12 @@ tools_list = [
 		
 		{
 			"type": "function",
-			"function":gekko_client.get_coin_data_by_id_desc
+			"function":gekko_client.get_crypto_data_by_id_desc
 		},
 
 		{
 			"type": "function",
-			"function": gekko_client.get_coin_historical_chart_data_by_id_desc
+			"function": gekko_client.get_crypto_historical_chart_data_by_id_desc
         },
 
 		{
@@ -55,7 +55,7 @@ tools_list = [
 		},
 		{
 			"type": "function",
-			"function": gekko_client.get_coin_historical_data_by_id_desc
+			"function": gekko_client.get_crypto_historical_data_by_id_desc
 		},
 		{
 			"type": "function",
