@@ -47,7 +47,7 @@ def search_online(question):
 
 search_online_desc = {
         "name": "search_online",
-        "description": "get the most recent and latest data from web do not use this tool to get prices information",
+        "description": "This function is used to get real world information and current/recent events ",
         "parameters": {
             "type": "object",
             "properties": {
