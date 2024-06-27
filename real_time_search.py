@@ -47,7 +47,7 @@ def search_online(question):
 
 search_online_desc = {
         "name": "search_online",
-        "description": "This function is used to get real world information and current/recent events ",
+        "description": "This function is used to get real world information and current/recent/last/latest events example: when was last bitcoin halving ?, what is bitcoin dominace now?",
         "parameters": {
             "type": "object",
             "properties": {
