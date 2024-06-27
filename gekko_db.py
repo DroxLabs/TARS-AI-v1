@@ -69,7 +69,7 @@ class GekkoDB:
     
     get_crypto_data_by_id_desc = {
         "name": "get_crypto_data_by_id",
-        "description": "This endpoint allows you to query all the current/Latest coin data of a coin (name, price, market .... including exchange tickers) on CoinGecko coin page based on a particular coin id..",
+        "description": "This endpoint allows you to query all the current/Latest coin data of a coin (name, price, market cap) only on CoinGecko coin page based on a particular coin id..",
         "parameters": {
             "type": "object",
             "properties": {
@@ -123,7 +123,7 @@ class GekkoDB:
     
     get_crypto_historical_data_by_id_desc = {
         "name": "get_crypto_historical_data_by_id",
-        "description": "This endpoint allows you to query the historical data (price, market cap, 24hrs volume, etc) at a given date for a coin based on a particular coin id.",
+        "description": "This endpoint allows you to query the historical data (price, market cap, 24hrs volume, etc) only at a given date for a coin based on a particular coin id.",
         "parameters": {
             "type": "object",
             "properties": {
