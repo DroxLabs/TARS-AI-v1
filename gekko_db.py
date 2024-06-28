@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-
+from real_time_search import search_online
 
 
 
@@ -221,10 +221,16 @@ class GekkoDB:
         }
         return self._make_request(endpoint,params)
 
-    def get_trend_search(self):
+    def get_trend_search(self, chain_name=None, qurey=""):
         """
         Fetches the list of all threading coins NTF and platforms.
         """
+        if chain_name:
+            print("chain name found calling online search")
+            print("question called from trend search:", qurey)
+            output = search_online(qurey)
+            return output
+        
         endpoint = "https://pro-api.coingecko.com/api/v3/search/trending"
         response = self._make_request(endpoint)
         data = {'coins': []}
@@ -245,6 +251,15 @@ class GekkoDB:
         "parameters": {
             "type": "object",
             "properties": {
+                "chain_name": {
+                    "type": "string",
+                    "description": "name of a blockchain"
+                    },
+
+                "qurey":{
+                    "type":"string",
+                    "description": "complete qurey asked by the user about something"
+                }
             }
         }
     }
