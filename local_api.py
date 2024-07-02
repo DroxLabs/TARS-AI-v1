@@ -23,7 +23,7 @@ client = OpenAI(
 )
 AUTH_TOKEN = os.getenv("AuthToken")
 mongo_pass = os.getenv("mongo_pass")
-mongo_store = MongoStore(f'mongodb+srv://abdul_samad:{mongo_pass}@tars-backend.fvg1suu.mongodb.net/')
+mongo_store = MongoStore('mongodb')
 DAILY_LIMIT = float(os.getenv('daily_limit'))
 
 app = FastAPI()
