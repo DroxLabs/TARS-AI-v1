@@ -247,7 +247,7 @@ class GekkoDB:
     
     get_trend_search_desc ={
         "name": "get_trend_search",
-        "description": "get all the trending coins, nft and categories",
+        "description": "get all the trending coins, nft. only",
         "parameters": {
             "type": "object",
             "properties": {
