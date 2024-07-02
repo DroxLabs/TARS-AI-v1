@@ -2,7 +2,7 @@ import requests
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-
+from real_time_search import search_online
 
 
 
@@ -67,9 +67,9 @@ class GekkoDB:
         endpoint = "https://pro-api.coingecko.com/api/v3/coins/list"
         return self._make_request(endpoint)
     
-    get_coin_data_by_id_desc = {
-        "name": "get_coin_data_by_id",
-        "description": "query all realtime current data for crypto CoinGecko coin page based on a particular coin id",
+    get_crypto_data_by_id_desc = {
+        "name": "get_crypto_data_by_id",
+        "description": "This endpoint allows you to query all the current/Latest coin data of a coin (name, price, market cap) only on CoinGecko coin page based on a particular coin id..",
         "parameters": {
             "type": "object",
             "properties": {
@@ -84,9 +84,9 @@ class GekkoDB:
 				}
         }
     
-    def get_coin_data_by_id(self, coin_id):
+    def get_crypto_data_by_id(self, coin_id):
         """
-        Fetches detailed information about a specific coin by its ID.
+        Fetches detailed information about a specific crypto coin by its ID.
         """
         if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
             coin_id = 'tars-protocol'
@@ -113,7 +113,7 @@ class GekkoDB:
             print(f"Error: {e}")
             return "I am unable to answer your query. can you be more specific"
     
-    def get_coin_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
+    def get_crypto_historical_data_by_id(self, coin_id='bitcoin',date='01-01-2024'):
         if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
             coin_id = 'tars-protocol'
         endpoint = f"https://pro-api.coingecko.com/api/v3/coins/{coin_id}/history?date={date}"
@@ -121,9 +121,9 @@ class GekkoDB:
         response = response.get('market_data', 'I am unable to find data for this specific date pls enter valid date')
         return response
     
-    get_coin_historical_data_by_id_desc = {
-        "name": "get_coin_historical_data_by_id",
-        "description": "get historical of a specific date related to crypto currency from CoinGecko coin page based on a particular coin id",
+    get_crypto_historical_data_by_id_desc = {
+        "name": "get_crypto_historical_data_by_id",
+        "description": "This endpoint allows you to query the historical data (price, market cap, 24hrs volume, etc) only at a given date for a coin based on a particular coin id.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -145,7 +145,7 @@ class GekkoDB:
             }       
         }       
     
-    def get_coin_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision='full', data_type='prices'):
+    def get_crypto_historical_chart_data_by_id(self,coin_id='bitcoin', currency='USD',days=5, interval='daily', precision='full', data_type='prices'):
         if coin_id in ['tars' ,'Tars-protocol', 'tars protocol', "TARS"]:
             coin_id = 'tars-protocol'
         if int(days) > 90:
@@ -159,8 +159,8 @@ class GekkoDB:
         return {'answer': 'Sorry we can not process this request!'}
     
     
-    get_coin_historical_chart_data_by_id_desc = {
-        "name": "get_coin_historical_chart_data_by_id",
+    get_crypto_historical_chart_data_by_id_desc = {
+        "name": "get_crypto_historical_chart_data_by_id",
         "parameters": {
             "type": "object",
             "properties": {
@@ -198,12 +198,12 @@ class GekkoDB:
             'interval',
             ]
         },
-        "description": "get historical chart to help user make a chart data related to crypto currency from CoinGecko coin page based on a particular coin id"
+        "description": "This endpoint allows you to get the historical chart data of a coin including time in UNIX, price, market cap and 24hrs volume based on particular coin id."
     }
 
 
 
-    def get_coin_info(self, coin_id,currency='USD', include_maket_cap=False, include_24hr_vol=False, include_24hr_change=False, include_last_updated_at=False):
+    def get_crypto_info(self, coin_id,currency='USD', include_maket_cap=False, include_24hr_vol=False, include_24hr_change=False, include_last_updated_at=False):
         """
         Fetches detailed information about a specific coin by its ID.
         """
@@ -221,10 +221,16 @@ class GekkoDB:
         }
         return self._make_request(endpoint,params)
 
-    def get_trend_search(self):
+    def get_trend_search(self, chain_name=None, qurey=""):
         """
         Fetches the list of all threading coins NTF and platforms.
         """
+        if chain_name:
+            print("chain name found calling online search")
+            print("question called from trend search:", qurey)
+            output = search_online(qurey)
+            return output
+        
         endpoint = "https://pro-api.coingecko.com/api/v3/search/trending"
         response = self._make_request(endpoint)
         data = {'coins': []}
@@ -245,12 +251,21 @@ class GekkoDB:
         "parameters": {
             "type": "object",
             "properties": {
+                "chain_name": {
+                    "type": "string",
+                    "description": "name of a blockchain"
+                    },
+
+                "qurey":{
+                    "type":"string",
+                    "description": "complete qurey asked by the user about something"
+                }
             }
         }
     }
 
     def get_tars_info(self):
-        coin_data = self.get_coin_data_by_id('tars-protocol')
+        coin_data = self.get_crypto_data_by_id('tars-protocol')
         description = """
                         Question: What exchanges is TAI / TARS available on?
                         Answer: TAI is available on a number of top rated centralized and decentralized exchanges.
@@ -267,6 +282,7 @@ class GekkoDB:
                         You can find TAI on the blockchain explorer here: https://explorer.solana.com/address/Hax9LTgsQkze1YFychnBLtFH8gYbQKtKfWKKg2SP6gdD
                         """
         return {'coin_data':coin_data, 'coin_info': description}
+    
     get_tars_info_desc =  { "name": "get_tars_info",
         "description": "Get informatiom about Tars Tai ot tars-protocol all question regarding Tars/tai coin in context on crypto",
         "parameters": {
